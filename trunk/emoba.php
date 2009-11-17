@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: emObA - Email Obfuscator Advanced
-Description: Scans pages, posts, comments for email addresses and creates mailto links which are inaccessible to 'bot harvesters. Emails standing alone result in a "Click" link; mailto links are preserved but obfuscated; the special occurrence "[Name]email" (no space between) is recognized and results in a link on "Name".  Without JavaScript, popups display the email with graphics for "@" and ".", making harvesting difficult.  (Based on eMob Email Obfuscator 1.1 by Billy Halsey.)
+Description: Scans pages, posts, comments for email addresses and creates mailto links which are difficult for 'bot harvesters to find. Typing A@B.C results in a "A-B-C" link;  href="mailto:" links are preserved but obfuscated; the special occurrence "[Name] A@B.C"  is recognized and results in a link on "Name".  Without JavaScript, hovering  pops up the email with graphic glyphs for "@" and ".".  (Based on eMob Email Obfuscator 1.1 by Billy Halsey.)
 Version: 1.0
 License: GPL
 Author: Kim Kirkpatrick
@@ -32,7 +32,8 @@ function emoba_includes(){
 add_action('init','emoba_includes');
 
 /****
-If CLICKPOP is true, hovering over the link "addr" changes it to "Click to email addr".  (This switch has no effect if JavaScript is off.)
+Option:
+If CLICKPOP is true, hovering over the link "addr" changes it to "Click to email addr". (This switch has no effect if JavaScript is off.)
 ****/
 define ("CLICKPOP", false);
 
@@ -47,7 +48,7 @@ define( 'SEP_DOT', '<img src="' . plugin_dir_url(__FILE__) . 'dot-glyph.gif" cla
 
 
 /****
-In $email, replace "." with SEP_DOT and "@" with SEP_AT
+This replaces "." with SEP_DOT and "@" with SEP_AT in $email
 ****/
 function emoba_glyph_email($email) {
   $email = str_replace('.', SEP_DOT, $email);
@@ -56,7 +57,7 @@ function emoba_glyph_email($email) {
 }
 
 /****
-In $email, replace "." and "@" with "-"
+This replaces "." and "@" with "-" in $email
 ****/
 function emoba_dash_email($email) {
   $email = str_replace('.', '-', $email);
@@ -66,7 +67,7 @@ function emoba_dash_email($email) {
 
 
 /****
-This output is seen when JavaScript is not available
+This is the email address seen when JavaScript is not available
 ****/
 function emoba_readable_mail($email="", $name="(Hover)" ) {
 
@@ -81,6 +82,7 @@ function emoba_readable_mail($email="", $name="(Hover)" ) {
   return $return;
 }
 
+
 /****
 This is the RE expression for detecting email addresses. (The result found is returned as email=>result.)
 
@@ -88,8 +90,9 @@ This is the RE expression for detecting email addresses. (The result found is re
 define( "ADDR_PATTERN",
         "(?P<email>[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4})" );
 
+
 /****
-Encode email address: Convert string to HTML-hex representation of character ordinal
+This encodes the email address. It converts string to HTML-hex representation of character ordinal
 ****/
 function emoba_hexify_mailto($mailto) {
   $hexified = '';
@@ -98,7 +101,6 @@ function emoba_hexify_mailto($mailto) {
   }
   return $hexified;
 }
-
 
 
 /****
@@ -131,9 +133,6 @@ $emoba_js .= "
 ";
   return $emoba_js;
 }
-
-
-echo $js;
 
 
 /****
@@ -199,6 +198,7 @@ function emoba_replace($content) {
 
   return $content;
 }
+
 
 /****
 Finally, link emoba_replace() into WordPress filters
