@@ -23,7 +23,7 @@ These will appear as standard email links displaying "Name". A bare email will a
  
 This is accomplished with a combination of WordPress filter hooks and JavaScript. If the browser is JavaScript-enabled, visitors to the site will see active email address links. If JavaScript is not enabled, hovering over the "link" will bring up a popup showing the email in human-readable form, eg `xxx [@] yyyy [.] zz`.  The [@] and [.] are  graphic images, not text, so the parts of the address are separated by lengthy runs of html (`<img ... />`).
 
-The true email addresses occur in the HTML source only in a well-hidden encoding.  The email address is converted to hexadecimal and appears only as the value of a JavaScript variable.  That encoded email is separated in the JavaScript from the telltale `mailto:` to further confuse spambots.  The no-JavaScript popup address is encoded in the JavaScript with graphics representing `@` and `.`, so even a fairly smart spambot will not be led easily to the address.
+The email addresses occur in the HTML source only in a well-hidden encoding.  The email address is converted to hexadecimal and appears only as the value of a JavaScript variable.  That encoded email is separated in the JavaScript from the telltale `mailto:` to further confuse spambots.  The no-JavaScript popup address is encoded in the JavaScript with graphics representing `@` and `.`, so even a fairly smart spambot will not be led easily to the address.
 
 
 == Installation ==
@@ -62,7 +62,7 @@ This is a major modification of Email Obfuscator by Billy Halsey. That plugin se
 	<span id="emoba-nnnn">
 		<span class="emoba-pop">
 			Name 
-			<span>  
+			<span>
 				<span class="emoba-em">
 					A
 				</span>
@@ -77,7 +77,7 @@ This is a major modification of Email Obfuscator by Billy Halsey. That plugin se
 				</span>
 				<span class="emoba-em">
 					C
-				</span>  
+				</span>
 			</span>
 		</span>
 	</span>
