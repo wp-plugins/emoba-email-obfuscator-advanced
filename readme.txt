@@ -13,17 +13,17 @@ This plugin effectively and automatically makes it very difficult for spambots t
 
 It recognizes, and produces obfuscated active (click-to-send) email links for, 
 
- * standard email links (`<a href="mailto:xxx@yyyy.zz">Name</a>`) 
+ * standard email links (`<a href="mailto:you&#64;example.com">Name</a>`) 
 
- * the special "easy to write" form  `[Name] xxx@yyyy.zz`
+ * the special "easy to write" form  `[Name] you&#64;example.com`
 
- * a bare email address `xxx@yyyy.zz` (with or without "mailto:" in front of it) 
+ * a bare email address `you&#64;example.com` (with or without "mailto:" in front of it) 
 
-These will appear as standard email links displaying "Name". A bare email will appear as a link `xxx-yyyy-zz` (punctuated with hyphens in place of @ and .) in place of a Name.
+These will appear as standard email links displaying "Name". A bare email will appear as a link `you-example-com` (punctuated with hyphens in place of @ and .), since there is no Name.
  
-This is accomplished with a combination of WordPress filter hooks and JavaScript. If the browser is JavaScript-enabled, visitors to the site will see active email address links. If JavaScript is not enabled, hovering over the "link" will bring up a popup showing the email in human-readable form, eg `xxx [@] yyyy [.] zz`.  The [@] and [.] are  graphic images, not text, so the parts of the address are separated by lengthy runs of html (`<img ... />`).
+This is accomplished with a combination of WordPress filter hooks and JavaScript. If the browser is JavaScript-enabled, visitors to the site will see active email address links. If JavaScript is not enabled, hovering over the "link" will bring up a popup showing the email in human-readable form, eg `you [@] example [.] com`.  The [@] and [.] are  graphic images, not text, so the parts of the address are separated by lengthy runs of html (`<img ... />`).
 
-The true email addresses occur in the HTML source only in a well-hidden encoding.  The email address is converted to hexadecimal and appears only as the value of a JavaScript variable.  That encoded email is separated in the JavaScript from the telltale `mailto:` to further confuse spambots.  The no-JavaScript popup address is encoded in the JavaScript with graphics representing `@` and `.`, so even a fairly smart spambot will not be led easily to the address.
+The email addresses occur in the HTML source only in a well-hidden encoding.  The email address is converted to hexadecimal and appears only as the value of a JavaScript variable.  That encoded email is separated in the JavaScript from the telltale `mailto:` to further confuse spambots.  The no-JavaScript popup address is encoded in the JavaScript with graphics representing `@` and `.`, so even a fairly smart spambot will not be led easily to the address.
 
 
 == Installation ==
@@ -56,13 +56,13 @@ This is a major modification of Email Obfuscator by Billy Halsey. That plugin se
 
 1. The name?  obfuscate = obscurate = obnubilate < obliterate
 
-1. What is the static html created for the email "Name" `<A@B.C>`?
+1. What is the static html created for the email "Name" `<A&#64;B.C>`?
 
   `
 	<span id="emoba-nnnn">
 		<span class="emoba-pop">
 			Name 
-			<span>  
+			<span>
 				<span class="emoba-em">
 					A
 				</span>
@@ -77,7 +77,7 @@ This is a major modification of Email Obfuscator by Billy Halsey. That plugin se
 				</span>
 				<span class="emoba-em">
 					C
-				</span>  
+				</span>
 			</span>
 		</span>
 	</span>
@@ -87,13 +87,13 @@ This is a major modification of Email Obfuscator by Billy Halsey. That plugin se
 
   If CLICKPOP is false, 
   `
-	<a href="mailto:[A@B.C hexified]" class="emoba-pop" title="Send email" >
+	<a href="mailto:[A&#64;B.C hexified]" class="emoba-pop" title="Send email" >
 		Name
 	</a>
   `
   If CLICKPOP is true, 
   `
-	<a href="mailto:[A@B.C hexified]" class="emoba-pop" title="Send email" >
+	<a href="mailto:[A&#64;B.C hexified]" class="emoba-pop" title="Send email" >
 		<span class="emoba-pop">
 			Click to email
 		</span>
