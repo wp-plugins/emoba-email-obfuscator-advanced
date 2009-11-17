@@ -107,4 +107,4 @@ This is a major modification of Email Obfuscator by Billy Halsey. That plugin se
 
 1. How can I deal with emails in static files (header, footer, sidebar, etc)?
 
- Simplest way: Put the email in a page; use browser to look at source, copy the resulting html source of that email (`<span id=emoba-nnnn">...</span>` , and include the script below it) to the template.
+ Simplest way: Put the email in a page; look at source from browser, and copy the resulting html source of that email (`<span id=emoba-nnnn">...</span>` , and include the script below it) to the template.
