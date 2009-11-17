@@ -13,11 +13,11 @@ This plugin effectively and automatically makes it very difficult for spambots t
 
 It recognizes, and produces obfuscated active (click-to-send) email links for, 
 
- * standard email links (`<a href="mailto:xxx@yyyy.zz">Name</a>`) 
+ * standard email links (`<a href="mailto:xxx&#64;yyyy.zz">Name</a>`) 
 
- * the special "easy to write" form  `[Name] xxx@yyyy.zz`
+ * the special "easy to write" form  `[Name] xxx&#64;yyyy.zz`
 
- * a bare email address `xxx@yyyy.zz` (with or without "mailto:" in front of it) 
+ * a bare email address `xxx&#64;yyyy.zz` (with or without "mailto:" in front of it) 
 
 These will appear as standard email links displaying "Name". A bare email will appear as a link `xxx-yyyy-zz` (punctuated with hyphens in place of @ and .) in place of a Name.
  
@@ -56,7 +56,7 @@ This is a major modification of Email Obfuscator by Billy Halsey. That plugin se
 
 1. The name?  obfuscate = obscurate = obnubilate < obliterate
 
-1. What is the static html created for the email "Name" `<A@B.C>`?
+1. What is the static html created for the email "Name" `<A&#64;B.C>`?
 
   `
 	<span id="emoba-nnnn">
@@ -87,13 +87,13 @@ This is a major modification of Email Obfuscator by Billy Halsey. That plugin se
 
   If CLICKPOP is false, 
   `
-	<a href="mailto:[A@B.C hexified]" class="emoba-pop" title="Send email" >
+	<a href="mailto:[A&#64;B.C hexified]" class="emoba-pop" title="Send email" >
 		Name
 	</a>
   `
   If CLICKPOP is true, 
   `
-	<a href="mailto:[A@B.C hexified]" class="emoba-pop" title="Send email" >
+	<a href="mailto:[A&#64;B.C hexified]" class="emoba-pop" title="Send email" >
 		<span class="emoba-pop">
 			Click to email
 		</span>
