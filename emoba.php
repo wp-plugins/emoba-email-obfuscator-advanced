@@ -146,57 +146,67 @@ The main function.
 3. The JavaScript (via emoba_addJScript()) replaces the <span> with the approriate <a> link.(with the address encoded).
 4. CSS (for class emoba-pop) creates the hover effect when JavaScript is turned off.
 ****/
-function emoba_replace($content) {
-// First, convert full  <a href="mailto:A@B.C >Name</a>  links
-  $addr_pattern = '|<a href="mailto:' .ADDR_PATTERN. '"[^>]*>(?P<name>[^<]+)</a>|i';
-  preg_match_all($addr_pattern, $content, $matches, PREG_SET_ORDER);
-  foreach ( $matches as $match ) {
-    $em_email = $match[email];
-    $em_name = $match[name];
-    $id = "emoba-" . rand(1000, 9999);
-    $repaddr = "<span id=\"$id\">";
-    $repaddr .= emoba_readable_mail($em_email, $em_name) . "</span>\n";
-    $repaddr .= emoba_addJScript($em_email, $em_name, $id);
-    $repaddrs[] = $repaddr;
-    $targets[] = $match[0];
-  }
-  $content = str_replace($targets, $repaddrs, $content);
 
-// Set search pattern to A@B.C
+function emoba_replace($content) {
+
+// (1) convert full  <a href="mailto:A@B.C >Name</a>  links
+
+  $addr_pattern = '|<a href="mailto:' .ADDR_PATTERN. '"[^>]*>(?P<name>[^<]+)</a>|i';
+
+  $content = preg_replace_callback(
+    '|<a href="mailto:' .ADDR_PATTERN. '"[^>]*>(?P<name>[^<]+)</a>|i',
+    create_function(
+      '$match',
+      '$em_email = $match[email];
+			$em_name = $match[name];
+			$id = "emoba-" . rand(1000, 9999);
+			$repaddr = "<span id=\"$id\">";
+			$repaddr .= emoba_readable_mail($em_email, $em_name) . "</span>\n";
+			$repaddr .= emoba_addJScript($em_email, $em_name, $id);
+			$repaddrs[] = $repaddr;
+			return $repaddr;' ),
+    $content );
+
+  // Set search pattern to A@B.C
   $addr_pattern = ADDR_PATTERN;
 
-// Remove mailto:'s from any remaining  mailto:A@B.C
-//  (this won't affect the full links just processed, since they no longer contain the string linkto:A@B.C)
+//  We can now remove mailto:'s from any remaining  mailto:A@B.C
+//  (This won't affect the full links just processed, since they no longer contain the string linkto:A@B.C)
+
   $content = preg_replace("/mailto:".$addr_pattern."/i", '$1', $content);
-// and convert the special pattern [Name] A@B.C to email link <a href="mailto:A@B.C >Name</a>
-  preg_match_all("/\[(?P<name>[^]]+)]\s*".$addr_pattern."/i", $content, $matches, PREG_SET_ORDER);
-  foreach ( $matches as $match ) {
-    $em_email = $match[email];
-    $em_name = $match[name];
-    $id = "emoba-" . rand(1000, 9999);
-    $repaddr = "<span id=\"$id\">";
-    $repaddr .= emoba_readable_mail($em_email, $em_name). "</span>\n";
-    $repaddr .= emoba_addJScript($em_email, $em_name, $id);
-    $repaddrs[] = $repaddr;
-    $targets[] = $match[0];
-  }
-  $content = str_replace($targets, $repaddrs, $content);
 
-// Finally, convert any remaining addresses A@B.C to link <a href="mailto:A@B.C">A-B-C</a>
-  preg_match_all('/'.$addr_pattern.'/i', $content, $matches, PREG_SET_ORDER); $j=1;
-  foreach ( $matches as $match ) {
-    $em_email = $match[email];
-    $em_name = emoba_dash_email($em_email);
-    $readable_email = emoba_glyph_email($em_email);
-    $id = "emoba-" . rand(1000, 9999);
-    $repaddr = "<span id=\"$id\">";
-    $repaddr .= $readable_email . "</span>\n";
-    $repaddr .= emoba_addJScript($em_email, $em_name, $id);
-    $repaddrs[] = $repaddr;
-    $targets[] = $match[0];
-  }
-  $content = str_replace($targets, $repaddrs, $content);
+// (2) Convert the special pattern [Name] A@B.C to email link <a href="mailto:A@B.C >Name</a>
 
+  $content = preg_replace_callback(
+    "/\[(?P<name>[^]]+)]\s*".$addr_pattern."/i",
+    create_function(
+      '$match',
+			'$em_email = $match[email];
+			$em_name = $match[name];
+			$id = "emoba-" . rand(1000, 9999);
+			$repaddr = "<span id=\"$id\">";
+			$repaddr .= emoba_readable_mail($em_email, $em_name). "</span>\n";
+			$repaddr .= emoba_addJScript($em_email, $em_name, $id);
+			return $repaddr;' ),
+    $content );
+
+// (3) Convert any remaining addresses A@B.C to the link <a href="mailto:A@B.C">A-B-C</a>
+
+  $content = preg_replace_callback(
+    '/'.$addr_pattern.'/i',
+    create_function(
+      '$match',
+			'$em_email = $match[email];
+			$em_name = emoba_dash_email($em_email);
+			$readable_email = emoba_glyph_email($em_email);
+			$id = "emoba-" . rand(1000, 9999);
+			$repaddr = "<span id=\"$id\">";
+			$repaddr .= $readable_email . "</span>\n";
+			$repaddr .= emoba_addJScript($em_email, $em_name, $id);
+			return $repaddr;' ),
+    $content );
+
+// We're through!
   return $content;
 }
 
@@ -210,4 +220,50 @@ add_filter('comment_text', 'emoba_replace', 1); // must get there before the com
 add_filter('author_email', 'emoba_replace');
 add_filter('comment_email', 'emoba_replace');
 
+
+
+
+/**
+  preg_match_all($addr_pattern, $content, $matches, PREG_SET_ORDER);
+  foreach ( $matches as $match ) {
+    $em_email = $match[email];
+    $em_name = $match[name];
+    $id = "emoba-" . rand(1000, 9999);
+    $repaddr = "<span id=\"$id\">";
+    $repaddr .= emoba_readable_mail($em_email, $em_name) . "</span>\n";
+    $repaddr .= emoba_addJScript($em_email, $em_name, $id);
+    $repaddrs[] = $repaddr;
+    $targets[] = $match[0];
+  }
+  $content = str_replace($targets, $repaddrs, $content);
+**/
+/**
+  preg_match_all("/\[(?P<name>[^]]+)]\s*".$addr_pattern."/i", $content, $matches, PREG_SET_ORDER);
+  foreach ( $matches as $match ) {
+    $em_email = $match[email];
+    $em_name = $match[name];
+    $id = "emoba-" . rand(1000, 9999);
+    $repaddr = "<span id=\"$id\">";
+    $repaddr .= emoba_readable_mail($em_email, $em_name). "</span>\n";
+    $repaddr .= emoba_addJScript($em_email, $em_name, $id);
+    $repaddrs[] = $repaddr;
+    $targets[] = $match[0];
+  }
+  $content = str_replace($targets, $repaddrs, $content);
+**/
+/**
+  preg_match_all('/'.$addr_pattern.'/i', $content, $matches, PREG_SET_ORDER); $j=1;
+  foreach ( $matches as $match ) {
+    $em_email = $match[email];
+    $em_name = emoba_dash_email($em_email);
+    $readable_email = emoba_glyph_email($em_email);
+    $id = "emoba-" . rand(1000, 9999);
+    $repaddr = "<span id=\"$id\">";
+    $repaddr .= $readable_email . "</span>\n";
+    $repaddr .= emoba_addJScript($em_email, $em_name, $id);
+    $repaddrs[] = $repaddr;
+    $targets[] = $match[0];
+  }
+  $content = str_replace($targets, $repaddrs, $content);
+**/
 ?>
