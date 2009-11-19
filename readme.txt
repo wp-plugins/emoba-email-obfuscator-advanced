@@ -5,6 +5,7 @@ Tags: spam, email, mail, address, addresses, hide, JavaScript
 Requires at least: 2.1
 Tested up to: 2.8.6
 Stable tag: 1.1
+Version: 1.2
 
 == Description ==
 
@@ -42,9 +43,9 @@ The following classes are used in emoba.php.  They can have appearance styling a
 
 == Changelog ==
 
-Ver 1.0  2009/11/16
-Ver 1.1  2009/11/18  Fixed problem with operation in comments - raised priority of filter so emails don't remain for default comment_text filters to act on.
-Ver 1.2beta 2009/11/19 Fixed repeat email bug: correctly treats identical repeat emails (of all types)
+Ver 1.0  2009/11/16  
+Ver 1.1  2009/11/18  Fixed problem with operation in comments - raised priority of filter so emails don't remain for default comment_text filters to act on.  
+Ver 1.2  2009/11/19  Fixed repeat email bug: correctly treats identical repeat emails (of all types).  Now converts emails placed in text widgets.  
 
 
 == Acknowledgements ==
@@ -58,6 +59,14 @@ This is a major modification of Email Obfuscator by Billy Halsey. That plugin se
 
 1. The name?  obfuscate = obscurate = obnubilate < obliterate
 
+1. What does the constant CLICKPOP (defined at line 37 of emoba.php) do?
+
+  When CLICKPOP is defined true, hovering over "Name" changes the link to "Click to email Name".
+
+1. How can I deal with emails in static files (header, footer, sidebar, etc)?
+
+  Simplest way: Put the email in a page; look at source from browser, and copy the resulting html source of that email (`<span id=emoba-nnnn">...</span>`, as shown next, and also the `<script>...</script>` below it) to the template.
+ 
 1. What is the static html created for the email "Name" `<A&#64;B.C>`?
 
   `
@@ -103,10 +112,3 @@ This is a major modification of Email Obfuscator by Billy Halsey. That plugin se
 	</a>
   `    
 
-1. What does CLICKPOP (emoba.php, line 37) do?
-
- When "Name" is hovered over, CLICKPOP=true causes it to change to "Click to email Name".  
-
-1. How can I deal with emails in static files (header, footer, sidebar, etc)?
-
- Simplest way: Put the email in a page; look at source from browser, and copy the resulting html source of that email (`<span id=emoba-nnnn">...</span>` , and include the script below it) to the template.
