@@ -2,7 +2,7 @@
 Author: Kim Kirkpatrick
 Contributors:  kirkpatrick
 Tags: spam, email, mail, address, addresses, hide, JavaScript
-Requires at least: 2.1
+Requires at least: 2.3
 Tested up to: 2.8.6
 Stable tag: 1.1
 Version: 1.2
@@ -43,9 +43,10 @@ The following classes are used in emoba.php.  They can have appearance styling a
 
 == Changelog ==
 
-Ver 1.0  2009/11/16  
+  
+Ver 1.2  2009/11/19  Fixed repeat email bug: correctly treats identical repeat emails (of all types).  Now converts emails placed in text widgets (requires 2.3).  
 Ver 1.1  2009/11/18  Fixed problem with operation in comments - raised priority of filter so emails don't remain for default comment_text filters to act on.  
-Ver 1.2  2009/11/19  Fixed repeat email bug: correctly treats identical repeat emails (of all types).  Now converts emails placed in text widgets.  
+Ver 1.0  2009/11/16  
 
 
 == Acknowledgements ==
