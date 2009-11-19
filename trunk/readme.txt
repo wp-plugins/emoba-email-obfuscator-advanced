@@ -42,54 +42,10 @@ The following classes are used in emoba.php.  They can have appearance styling a
 
 == Changelog ==
 
-Ver 1.0  2009/11/16
-=== emObA - Email Obfuscator Advanced ===
-Author: Kim Kirkpatrick
-Contributors:  kirkpatrick
-Tags: spam, email, mail, address, addresses, hide, JavaScript
-Requires at least: 2.1
-Tested up to: 2.8.6
-Stable tag: 1.1
-
-== Description ==
-
-This plugin effectively and automatically makes it very difficult for spambots to harvest email addresses from your WordPress-powered blog. Email addresses may be placed in posts, comments, and pages, plain, as html links, or in a special "easy email" form, and they are automatically protected by emObA. All email addresses appearing on your blog will appear on the screen as active links to normal, valid, and correct email addresses (the actual email is seen in the status bar when hovering), but to spambots they will have no recognizable features.  
-
-
-It recognizes, and produces obfuscated active (click-to-send) email links for, 
-
- * standard email links (`<a href="mailto:you&#64;example.com">Name</a>`) 
-
- * the special "easy to write" form  `[Name] you&#64;example.com`
-
- * a bare email address `you&#64;example.com` (with or without "mailto:" in front of it) 
-
-These will appear as standard email links displaying "Name". A bare email will appear as a link `you-example-com` (punctuated with hyphens in place of @ and .), since there is no Name.
- 
-This is accomplished with a combination of WordPress filter hooks and JavaScript. If the browser is JavaScript-enabled, visitors to the site will see active email address links. If JavaScript is not enabled, hovering over the "link" will bring up a popup showing the email in human-readable form, eg `you [@] example [.] com`.  The [@] and [.] are  graphic images, not text, so the parts of the address are separated by lengthy runs of html (`<img ... />`).
-
-The email addresses occur in the HTML source only in a well-hidden encoding.  The email address is converted to hexadecimal and appears only as the value of a JavaScript variable.  That encoded email is separated in the JavaScript from the telltale `mailto:` to further confuse spambots.  The no-JavaScript popup address is encoded in the JavaScript with graphics representing `@` and `.`, so even a fairly smart spambot will not be led easily to the address.
-
-
-== Installation ==
-
-Place the folder contained in the zip file into your wp-content/plugins directory. From your wp-admin screen, activate the plugin Email Obfuscator Advanced.  
-
-The following classes are used in emoba.php.  They can have appearance styling added in emoba_style.css, but the display: attributes must be left as shown in order that the hover popups work:
-`
-	.emoba-pop { }
-	.emoba-pop span { display: none; } 
-	.emoba-pop:hover span {	display: inline; }
-	.emoba-glyph { }
-	.emoba-em { }
-
-`
-
-== Changelog ==
-
 Ver 1.0  2009/11/16  
 Ver 1.1  2009/11/18  Fixed problem with operation in comments - raised priority of filter so emails don't remain for default comment_text filters to act on.  
-Ver 1.1.1 2009/11/19 Fixed repeat email bug: correctly treats identical repeat emails (of all types)
+Ver 1.2beta 2009/11/19 Fixed repeat email bug: correctly treats identical repeat emails (of all types)
+
 
 == Acknowledgements ==
 
