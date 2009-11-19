@@ -5,7 +5,7 @@ Description: Scans pages, posts, comments for email addresses and creates mailto
 Version: 1.1
 License: GPL
 Author: Kim Kirkpatrick
-Author URI:
+Author URI:http://kirknet/wpplugins
 */
 /*  Copyright 2009  Kim Kirkpatrick  (email : kirk@kirknet.org)
 
