@@ -4,11 +4,11 @@ Contributors:  kirkpatrick
 Tags: spam, email, mail, address, addresses, hide, JavaScript
 Requires at least: 2.1
 Tested up to: 2.8.6
-Stable tag: 1.0
+Stable tag: 1.1
 
 == Description ==
 
-This plugin effectively and automatically makes it very difficult for spambots to harvest email addresses from your WordPress-powered blog. Email addresses may be placed in posts, comments, and pages, plain, as html links, or in a special "easy email" form, and emObA automatically protects them. All email addresses appearing on your blog will appear on the screen as active links to normal, valid, and correct email addresses (the actual email is seen in the status bar when hovering), but to spambots they will have no recognizable features.  
+This plugin effectively and automatically makes it very difficult for spambots to harvest email addresses from your WordPress-powered blog. Email addresses may be placed in posts, comments, and pages, plain, as html links, or in a special "easy email" form, and they are automatically protected by emObA. All email addresses appearing on your blog will appear on the screen as active links to normal, valid, and correct email addresses (the actual email is seen in the status bar when hovering), but to spambots they will have no recognizable features.  
 
 
 It recognizes, and produces obfuscated active (click-to-send) email links for, 
@@ -43,6 +43,7 @@ The following classes are used in emoba.php.  They can have appearance styling a
 == Changelog ==
 
 Ver 1.0  2009/11/16
+Ver 1.1  2009/11/18  Fixed problem with operation in comments - raised priority of filter so emails don't remain for default comment_text filters to act on.
 
 
 == Acknowledgements ==
