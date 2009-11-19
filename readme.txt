@@ -4,7 +4,7 @@ Contributors:  kirkpatrick
 Tags: spam, email, mail, address, addresses, hide, JavaScript
 Requires at least: 2.1
 Tested up to: 2.8.6
-Stable tag: 1.1.1
+Stable tag: 1.1
 
 == Description ==
 
