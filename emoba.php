@@ -23,6 +23,16 @@ Author URI: http://kirknet/wpplugins
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+
+
+/****
+Option (at present, the only one):
+If CLICKPOP is true, hovering over the link "addr" changes it to "Click to email addr". (This switch has no effect if JavaScript is off.)
+****/
+define ("CLICKPOP", false);
+
+
+
 /****
 Place the css in the head:
 ****/
@@ -30,13 +40,6 @@ function emoba_includes(){
   wp_enqueue_style( 'emoba_style', plugin_dir_url(__FILE__) . 'emoba_style.css');
 }
 add_action('init','emoba_includes');
-
-
-/****
-Option:
-If CLICKPOP is true, hovering over the link "addr" changes it to "Click to email addr". (This switch has no effect if JavaScript is off.)
-****/
-define ("CLICKPOP", false);
 
 
 /****
@@ -87,7 +90,6 @@ function emoba_readable_mail($email="", $name="(Hover)" ) {
 
 /****
 This is the RE expression for detecting email addresses. (The result found is returned as email=>result.)
-
 ****/
 define( "ADDR_PATTERN",
         "(?P<email>[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4})" );
@@ -175,7 +177,7 @@ function emoba_replace($content) {
 // (2) Convert the special pattern [Name] A@B.C to email link <a href="mailto:A@B.C >Name</a>
 
   $content = preg_replace_callback(
-    "|\[(?P<name>[^]]+)]\s*".ADDR_PATTERN."|i",
+    "/\[(?P<name>[^]]+)]([\s]|&nbsp;)*".ADDR_PATTERN."/i",
     create_function(
       '$match',
 			'$em_email = $match[email];
