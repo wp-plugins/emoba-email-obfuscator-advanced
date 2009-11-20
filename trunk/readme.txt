@@ -38,7 +38,7 @@ The email addresses occur in the HTML source only in a well-hidden encoding.  Th
 == Changelog ==
 
   
-Ver 1.2  2009/11/19  Fixed repeat email bug: correctly treats identical repeat emails (of all types).  Now converts emails placed in text widgets (requires 2.3).  
+Ver 1.2  2009/11/19  Fixed repeat email bug: correctly treats identical repeat emails (of all types).  Now converts emails placed in text widgets (requires 2.3).  Fixed problem with multiple spaces in the special form  [name]   a@b.cc .
 Ver 1.1  2009/11/18  Fixed problem with operation in comments - raised priority of filter so emails don't remain for default comment_text filters to act on.  
 Ver 1.0  2009/11/16  
 
@@ -49,8 +49,6 @@ This is a major modification of Email Obfuscator by Billy Halsey. That plugin se
 
 
 == Frequently Asked Questions ==
-
-1. Restriction: The special form email [Name] email  allows 0 or 1 space between ] and email.
 
 1. The name?  obfuscate = obscurate = obnubilate < obliterate
 
@@ -73,7 +71,7 @@ This is a major modification of Email Obfuscator by Billy Halsey. That plugin se
 
 1. How can I deal with emails in static files (header, footer, sidebar, etc)?
 
-  Simplest way: Put the email in a page; look at source from browser, and copy the resulting html source of that email (`<span id=emoba-nnnn">...</span>`, as shown next, and also the `<script>...</script>` below it) to the template.
+  Simplest way: Put the email in a page; look at source from browser, and copy the resulting html source of that email (`<span id=emoba-nnnn">...</span>`, as shown next, and also the `<script>...</script>` below it) to the template.  (But emObA works in text widgets directly.)
  
 1. What is the static html created for the email "Name" `<A@B.C>`?
 
