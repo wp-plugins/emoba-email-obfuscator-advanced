@@ -110,28 +110,30 @@ The JavaScript for creating the email link and popup
 ****/
 function emoba_addJScript($email, $ename, $id) {
   $link   = emoba_hexify_mailto($email);
-  $emoba_js = "
-<script type=\"text/javascript\">
+  $emoba_js = <<<AJS
+<script type="text/javascript">
   var mailtostring = 'mailto:';
   var mailNode = document.getElementById('$id');
   var linkNode = document.createElement('a');
   linkNode.title = 'Send email';
   linkNode.id = '$id';
   var mailtolink = mailtostring + '$link';
-  linkNode.href = mailtolink;";
+  linkNode.href = mailtolink;
+AJS;
 if (true == CLICKPOP) {
-  $emoba_js .= "
+  $emoba_js .= <<<AJS
   var spanNode = document.createElement('span');
   spanNode.innerHTML = 'Click to email ';
   linkNode.appendChild(spanNode);
-  linkNode.className = 'emoba-pop';";
+  linkNode.className = 'emoba-pop';
+AJS;
 }
-$emoba_js .= "
+$emoba_js .= <<<AJS
   var tNode = document.createTextNode('$ename');
   linkNode.appendChild(tNode);
   mailNode.parentNode.replaceChild(linkNode, mailNode);
 </script>
-";
+AJS;
   return $emoba_js;
 }
 
