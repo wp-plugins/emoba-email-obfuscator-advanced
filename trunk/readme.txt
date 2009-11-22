@@ -5,8 +5,8 @@ Donate link: http://kirknet.org/wpplugins/
 Tags: spam, email, mail, address, addresses, hide, JavaScript
 Requires at least: 2.3
 Tested up to: 2.8.6
-Stable tag: 1.1
-Version: 1.2RC
+Stable tag: 1.2
+Version: 1.2
 
 == Description ==
 
