@@ -38,9 +38,9 @@ The email addresses occur in the HTML source only in a well-hidden encoding.  Th
 == Changelog ==
 
   
-Ver 1.2  2009/11/19  Fixed repeat email bug: correctly treats identical repeat emails (of all types).  Now converts emails placed in text widgets (requires 2.3).  Fixed problem with multiple spaces in the special form  [name]   a@b.cc .
-Ver 1.1  2009/11/18  Fixed problem with operation in comments - raised priority of filter so emails don't remain for default comment_text filters to act on.  
-Ver 1.0  2009/11/16  
+Ver 1.2  2009/11/19  Fixed repeat email bug: correctly treats identical repeat emails (of all types).  Now converts emails placed in text widgets (requires 2.3).  Fixed problem with multiple spaces in the special form  [name]   a@b.cc .  
+Ver 1.1  2009/11/18  Fixed problem with operation in comments - raised priority of filter so emails don't remain for default comment_text filters to act on.    
+Ver 1.0  2009/11/16    
 
 
 == Acknowledgements ==
