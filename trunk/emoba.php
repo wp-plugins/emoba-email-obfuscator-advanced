@@ -1,8 +1,8 @@
 <?php
 /*
-Plugin Name: emObA - Email Obfuscator Advanced
-Description: Scans pages, posts, comments for email addresses and creates mailto links which are difficult for 'bot harvesters to find. Typing A@B.C results in a "A-B-C" link;  href="mailto:" links are preserved but obfuscated; the special occurrence "[Name] A@B.C"  is recognized and results in a link on "Name".  Without JavaScript, hovering  pops up the email with graphic glyphs for "@" and ".".  (Based on eMob Email Obfuscator 1.1 by Billy Halsey.)
-Version: 1.2
+Plugin Name: emObA
+Description: emObA - Email Obfuscator Advanced -- Scans pages, posts, comments for email addresses and creates mailto links which are difficult for 'bot harvesters to find. Typing A@B.C results in a "A-B-C" link;  href="mailto:" links are preserved but obfuscated; the special occurrence "[Name] A@B.C"  is recognized and results in a link on "Name".  Without JavaScript, hovering  pops up the email with graphic glyphs for "@" and ".".  (Based on eMob Email Obfuscator 1.1 by Billy Halsey.)
+Version: 1.2.5
 License: GPL
 Author: Kim Kirkpatrick
 Author URI: http://kirknet/wpplugins
@@ -26,11 +26,16 @@ Author URI: http://kirknet/wpplugins
 
 
 /****
-Option (at present, the only one):
-If CLICKPOP is true, hovering over the link "addr" changes it to "Click to email addr". (This switch has no effect if JavaScript is off.)
+If CLICKPOP is true, hovering over the link "addr" changes it to "Click to email addr".  (This switch has no effect if JavaScript is off.)
 ****/
 define ("CLICKPOP", false);
 
+
+/****
+If BARE_TO_LINK is true, bare emails (a@b.c) will be converted to a link with visible "name" a ^ b c.  If false, there will be no link, but the email will appear in the glyph form.
+(A problem with CDATA commenting being removed by WordPress (space forced into <! [CDATA and conversion of close to ]]&gt;) prevent the link from containing the glyph name.  The only workaraound I know of requires hacking WordPress.)
+****/
+define ("BARE_TO_LINK", true);
 
 
 /****
@@ -46,50 +51,46 @@ add_action('init','emoba_includes');
 Here we designate the graphic glyphs used for at/dot separators in the displayed email addresses.
 You may want to change the alts or i18n them.
 
-If text rather than glyph is desired for the separators, replace with your versions of define( 'SEP_AT', ' [at] ' ); and define( 'SEP_DOT', ' [dot] ' );
+If text rather than glyph is desired for the separators,
+replace with your versions of define( 'SEP_AT', ...) and define( 'SEP_DOT', ... );
 ****/
-define( 'SEP_AT',  '<img src="' . plugin_dir_url(__FILE__) . 'at-glyph.gif"  class="emoba-glyph" alt="at"  height="8" />' );
-define( 'SEP_DOT', '<img src="' . plugin_dir_url(__FILE__) . 'dot-glyph.gif" class="emoba-glyph" alt="dot" height="9" />' );
+define( 'SEP_AT',  '<img src="' . plugin_dir_url(__FILE__) . 'at-glyph.gif"  alt="at"  class="emoba-glyph" />' );
+define( 'SEP_DOT', '<img src="' . plugin_dir_url(__FILE__) . 'dot-glyph.gif" alt="dot" class="emoba-glyph" />' );
 
 
 /****
-This replaces "." with SEP_DOT and "@" with SEP_AT in $email
+This replaces "@" with SEP_AT and "." with SEP_DOT in $email
 ****/
 function emoba_glyph_email($email) {
   $email = str_replace('.', SEP_DOT, $email);
-  $email = str_replace('@', SEP_AT, $email);
+  $email = str_replace('@', SEP_AT , $email);
   return '<span class="emoba-em">' . $email . '</span>';
 }
 
-/****
-This replaces "." and "@" with "-" in $email
-****/
-function emoba_dash_email($email) {
-  $email = str_replace('.', '-', $email);
-  $email = str_replace('@', '-', $email);
-  return  $email ;
-}
-
 
 /****
-This is the email address seen when JavaScript is not available
+This constructs a glyphed email address for use when JavaScript is not available
 ****/
 function emoba_readable_mail($email="", $name="(Hover)" ) {
-
-  $email = str_replace('.',
-        '</span><span class="emoba-symbol">' . SEP_DOT . '</span><span class="emoba-em">',
-         $email);
-  $email = str_replace('@',
-        '</span><span class="emoba-symbol">' . SEP_AT . '</span><span class="emoba-em">',
-         $email);
-  $addr = '<span class="emoba-pop">' . $name . '<span>&nbsp;&nbsp;<span class="emoba-em">';
-  $addr .= $email . '</span>&nbsp;&nbsp;</span></span>';
+  $glyph_email = emoba_glyph_email($email);
+  $addr = '<span class="emoba-pop">' . $name . '<span>&nbsp;&nbsp;';
+  $addr .= $glyph_email . '&nbsp;&nbsp;</span></span>';
   return $addr;
 }
 
 
 /****
-This is the RE expression for detecting email addresses. (The result found is returned as email=>result.)
+This replaces "@" and "." with " ^ " and " " in $email; used for bare (nameless) emails
+****/
+function emoba_textify_email($email) {
+  $email = str_replace('@', ' ^ ', $email);
+  $email = str_replace('.', ' ', $email);
+  return  $email ;
+}
+
+
+/****
+This is the RE expression for detecting email addresses. (The result found is returned as $match[email].)
 ****/
 define( "ADDR_PATTERN",
         "(?P<email>[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4})" );
@@ -124,14 +125,18 @@ function emoba_addJScript($email, $ename, $id) {
 AJS;
 if (true == CLICKPOP) {
   $emoba_js .= <<<AJS
+
   var spanNode = document.createElement('span');
+  spanNode.className = 'emoba-hover';
   spanNode.innerHTML = 'Click to email ';
   linkNode.appendChild(spanNode);
   linkNode.className = 'emoba-pop';
 AJS;
 }
 $emoba_js .= <<<AJS
-  var tNode = document.createTextNode('$ename');
+
+  var tNode = document.createElement('span');
+  tNode.innerHTML = '$ename';
   linkNode.appendChild(tNode);
   mailNode.parentNode.replaceChild(linkNode, mailNode);
 </script>
@@ -145,10 +150,10 @@ The main function.
 1. Detect and process emails, in this order:
   a. as a link <a href="mailto:A@B.C">Name</a>
   b. as a special email encoding [Name] A@B.C
-  c. as a raw email A@B.C; the "Name" in this case is "A-B-C"
-2. Each of these creates a random-id <span> which includes the Name and pop-up email with graphics for @ and . (in case JavaScript is off), and inserts JavaScript.
+  c. as a raw email A@B.C (The "Name" in this case is the email itself, textified or glyphed depending on BARE_TO_LINK.)
+2. Each of these creates a random-id span which includes the Name and pop-up email with graphics for @ and . (in case JavaScript is off), and inserts JavaScript.
 3. The JavaScript (via emoba_addJScript()) replaces the <span> with the approriate <a> link.(with the address encoded).
-4. CSS (for class emoba-pop) creates the hover effect when JavaScript is turned off.
+4. CSS (for classes emoba-pop, emoba-hover) creates the hover effect when JavaScript is turned off.
 ****/
 
 function emoba_replace($content) {
@@ -156,7 +161,7 @@ function emoba_replace($content) {
 // (1) convert full  <a href="mailto:A@B.C >Name</a>  links
 
   $content = preg_replace_callback(
-    '|<a href="mailto:' .ADDR_PATTERN. '"[^>]*>(?P<name>[^<]+)</a>|i',
+    '!<a href="mailto:' .ADDR_PATTERN. '"[^>]*>(?P<name>[^<]+)</a>!i',
     create_function(
       '$match',
       '$em_email = $match[email];
@@ -174,10 +179,10 @@ function emoba_replace($content) {
 
   $content = preg_replace("|mailto:".ADDR_PATTERN."|i", '$1', $content);
 
-// (2) Convert the special pattern [Name] A@B.C to email link <a href="mailto:A@B.C >Name</a>
+// (2) Convert the special pattern {Name} A@B.C to email link <a href="mailto:A@B.C >Name</a>
 
   $content = preg_replace_callback(
-    "/\[(?P<name>[^]]+)]([\s]|&nbsp;)*".ADDR_PATTERN."/i",
+    "!\[(?P<name>[^]]+)\]([\s]|&nbsp;)*".ADDR_PATTERN."!i",
     create_function(
       '$match',
 			'$em_email = $match[email];
@@ -189,14 +194,16 @@ function emoba_replace($content) {
 			return $repaddr;' ),
     $content );
 
-// (3) Convert any remaining addresses A@B.C to the link <a href="mailto:A@B.C">A-B-C</a>
+if (true == BARE_TO_LINK ) {
+
+// (3) Convert any remaining addresses A@B.C to the link <a href="mailto:A@B.C">A ^ B C</a>
 
   $content = preg_replace_callback(
-    '|'.ADDR_PATTERN.'|i',
+    '!'.ADDR_PATTERN.'!i',
     create_function(
       '$match',
 			'$em_email = $match[email];
-			$em_name = emoba_dash_email($em_email);
+			$em_name = emoba_textify_email($em_email);
 			$readable_email = emoba_glyph_email($em_email);
 			$id = "emoba-" . rand(1000, 9999);
 			$repaddr = "<span id=\"$id\">";
@@ -205,6 +212,23 @@ function emoba_replace($content) {
 			return $repaddr;' ),
     $content );
 
+}else{
+
+// (3) Convert any remaining addresses A@B.C to the glyphed form A [at] B [dot] C
+
+  $content = preg_replace_callback(
+    '|'.ADDR_PATTERN.'|i',
+    create_function(
+      '$match',
+			'$em_email = $match[email];
+			$em_name = emoba_textify_email($em_email);
+			$readable_email = emoba_glyph_email($em_email);
+			$repaddr = $readable_email;
+			return $repaddr;' ),
+    $content );
+
+}
+
 // We're through!
   return $content;
 }
@@ -212,13 +236,12 @@ function emoba_replace($content) {
 
 /****
 Finally, link emoba_replace() into WordPress filters
-****/
+******/
 add_filter('the_content', 'emoba_replace');
 add_filter('the_excerpt', 'emoba_replace');
-add_filter('comment_text', 'emoba_replace', 1); // must get there before the comment text filters do
+add_filter('comment_text', 'emoba_replace', 1); // high priority, to get there before the comment text filters do
 add_filter('widget_text', 'emoba_replace');
 add_filter('author_email', 'emoba_replace');
 add_filter('comment_email', 'emoba_replace');
-
 
 ?>
