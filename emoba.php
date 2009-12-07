@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: emObA
-Description: emObA - Email Obfuscator Advanced -- Scans pages, posts, comments for email addresses and creates mailto links which are difficult for 'bot harvesters to find. Typing A@B.C results in a "A-B-C" link;  href="mailto:" links are preserved but obfuscated; the special occurrence "[Name] A@B.C"  is recognized and results in a link on "Name".  Without JavaScript, hovering  pops up the email with graphic glyphs for "@" and ".".  (Based on eMob Email Obfuscator 1.1 by Billy Halsey.)
+Description: emObA - Email Obfuscator Advanced -- Scans pages, posts, comments for email addresses and creates mailto links which are difficult for 'bot harvesters to find. Typing A@B.C results in a "A-B-C" link;  href="mailto:" links are preserved but obfuscated; the special occurrence "[EMAIL Name A@B.C]"  is recognized and results in a link on "Name".  Without JavaScript, hovering  pops up the email with graphic glyphs for "@" and ".".  (Based on eMob Email Obfuscator 1.1 by Billy Halsey.)
 Version: 1.2.5
 License: GPL
 Author: Kim Kirkpatrick
@@ -28,7 +28,7 @@ Author URI: http://kirknet/wpplugins
 /****
 If CLICKPOP is true, hovering over the link "addr" changes it to "Click to email addr".  (This switch has no effect if JavaScript is off.)
 ****/
-define ("CLICKPOP", false);
+define ("CLICKPOP", true);
 
 
 /****
@@ -71,7 +71,7 @@ function emoba_glyph_email($email) {
 /****
 This constructs a glyphed email address for use when JavaScript is not available
 ****/
-function emoba_readable_mail($email="", $name="(Hover)" ) {
+function emoba_readable_email($email="", $name="(Hover)" ) {
   $glyph_email = emoba_glyph_email($email);
   $addr = '<span class="emoba-pop">' . $name . '<span>&nbsp;&nbsp;';
   $addr .= $glyph_email . '&nbsp;&nbsp;</span></span>';
@@ -92,8 +92,8 @@ function emoba_textify_email($email) {
 /****
 This is the RE expression for detecting email addresses. (The result found is returned as $match[email].)
 ****/
-define( "ADDR_PATTERN",
-        "(?P<email>[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4})" );
+define( "EMAIL",
+        "(?P<email>[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4})" );
 
 
 /****
@@ -161,14 +161,14 @@ function emoba_replace($content) {
 // (1) convert full  <a href="mailto:A@B.C >Name</a>  links
 
   $content = preg_replace_callback(
-    '!<a href="mailto:' .ADDR_PATTERN. '"[^>]*>(?P<name>[^<]+)</a>!i',
+    '!<a(.*?)href="mailto:' .EMAIL. '"[^>]*>(?P<name>[^<]+)</a>!i',
     create_function(
       '$match',
       '$em_email = $match[email];
 			$em_name = $match[name];
 			$id = "emoba-" . rand(1000, 9999);
 			$repaddr = "<span id=\"$id\">";
-			$repaddr .= emoba_readable_mail($em_email, $em_name) . "</span>\n";
+			$repaddr .= emoba_readable_email($em_email, $em_name) . "</span>\n";
 			$repaddr .= emoba_addJScript($em_email, $em_name, $id);
 			$repaddrs[] = $repaddr;
 			return $repaddr;' ),
@@ -177,19 +177,21 @@ function emoba_replace($content) {
 //  We can now remove mailto:'s from any remaining  mailto:A@B.C
 //  (This won't affect the full links just processed, since they no longer contain the string linkto:A@B.C)
 
-  $content = preg_replace("|mailto:".ADDR_PATTERN."|i", '$1', $content);
+  $content = preg_replace("!mailto:".EMAIL."!i", '$1', $content);
 
-// (2) Convert the special pattern {Name} A@B.C to email link <a href="mailto:A@B.C >Name</a>
+// (2) Convert the special pattern [Name] A@B.C to email link <a href="mailto:A@B.C >Name</a>
+// (2) Convert the special pattern [EMAIL Name A@B.C] to email link <a href="mailto:A@B.C >Name</a>
 
   $content = preg_replace_callback(
-    "!\[(?P<name>[^]]+)\]([\s]|&nbsp;)*".ADDR_PATTERN."!i",
+//    "!\[(?P<name>[^]]+)\]([\s]|&nbsp;)*".EMAIL."!", // [Name] A@B.C
+    "!\[EMAIL([\s]|&nbsp;)+(?P<name>[a-zA-Z0-9]+(([\s]|&nbsp;)[a-zA-Z0-9_-]+)*)([\s]|&nbsp;)+" . EMAIL . "([\s]|&nbsp;)*]!", // [EMAIL Name A@B.C]
     create_function(
       '$match',
 			'$em_email = $match[email];
 			$em_name = $match[name];
 			$id = "emoba-" . rand(1000, 9999);
 			$repaddr = "<span id=\"$id\">";
-			$repaddr .= emoba_readable_mail($em_email, $em_name). "</span>\n";
+			$repaddr .= emoba_readable_email($em_email, $em_name). "</span>\n";
 			$repaddr .= emoba_addJScript($em_email, $em_name, $id);
 			return $repaddr;' ),
     $content );
@@ -199,7 +201,7 @@ if (true == BARE_TO_LINK ) {
 // (3) Convert any remaining addresses A@B.C to the link <a href="mailto:A@B.C">A ^ B C</a>
 
   $content = preg_replace_callback(
-    '!'.ADDR_PATTERN.'!i',
+    '!'.EMAIL.'!',
     create_function(
       '$match',
 			'$em_email = $match[email];
@@ -217,7 +219,7 @@ if (true == BARE_TO_LINK ) {
 // (3) Convert any remaining addresses A@B.C to the glyphed form A [at] B [dot] C
 
   $content = preg_replace_callback(
-    '|'.ADDR_PATTERN.'|i',
+    '!'.EMAIL.'!',
     create_function(
       '$match',
 			'$em_email = $match[email];
@@ -244,4 +246,12 @@ add_filter('widget_text', 'emoba_replace');
 add_filter('author_email', 'emoba_replace');
 add_filter('comment_email', 'emoba_replace');
 
-?>
+/****
+For use with Simple:Press Forum, only after SPF has been modified:
+	1. the_content -> the_forum_content (throughout SPF files and on forum page template
+	2. copy function the_content from wp-include/post-content.php to sf-header-forum.php around line 77 (just inside function sf_setup_header); rename the copied version the_forum_content()
+	3. add_filter('sf_save_post_content', 'sf_package_links', 10);
+   changed to
+  	 add_filter('sf_show_post_content', 'sf_package_links', 10);
+****/
+add_filter('sf_show_post_content', 'emoba_replace'); // Priority no greater than 10

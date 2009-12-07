@@ -17,7 +17,7 @@ It recognizes, and produces obfuscated active (click-to-send) email links for,
 
  * standard email links (`<a href="mailto:you@example.com">Name</a>`)  
 
- * the special "easy to write" form  `[Name] you@example.com`  
+ * the special "easy to write" form  `[EMAIL Name A@B.C]` (changed from `[Name] you@example.com` in prior versions)
 
  * a bare email address `you@example.com` (with or without "mailto:" in front of it)  
 
@@ -38,7 +38,7 @@ The email addresses occur in the HTML source only in a well-hidden encoding.  Th
 == Changelog ==
 
 = 1.2.5 =
-2009/12/01  Cleaned up some code, improved JavaScript.  Introduced `BARE_TO_LINK`. Changed default textifying characters from dashes to hook and space.
+2009/12/06  Cleaned up some code, improved JavaScript.  Introduced `BARE_TO_LINK`. Changed default textifying characters from dashes to hook and space.  Changed "easy to write" email tag to  `[EMAIL Name A@B.C]`; the old form remains in the code, and can be recovered by commenting-uncommenting lines 186-187 in emoba.php.
 = 1.2 =
 2009/11/19  Fixed repeat email bug: correctly treats identical repeat emails (of all types).  Now converts emails placed in text widgets (requires WP 2.3).  Fixed problem with multiple spaces in the special form  [name]   a@b.cc .  Introduced `CLICKPOP`.
 = 1.1 = 
@@ -90,14 +90,14 @@ This is a major modification of Email Obfuscator by Billy Halsey. That plugin se
 	<span id="emoba-nnnn">
 		<span class="emoba-pop">
 			Name 
-			<span>  
+			<span>  
 				<span class="emoba-em">
 					A
 					<img src="http://.../at-glyph.gif" alt="at" class="emoba-glyph" />
 					B
 					<img src="http://.../dot-glyph.gif" alt="dot" class="emoba-glyph" />
 					C
-				</span>  
+				</span>  
 			</span>
 		</span>
 	</span>
@@ -126,3 +126,27 @@ This is a major modification of Email Obfuscator by Billy Halsey. That plugin se
 	</a>
   `
   where [hexified] means the email `A@B.C` converted to %-hex characters.
+  
+  
+1. I am using Simple:Press Forum, and this plugin really messes up email addresses, and I can't fix it!  What should I do??
+
+	Here are full instructions for fixing emObA and Simple:Press to work together.  (It is not for the faint-of-heart!)
+	
+	1. Copy entire `function the_content()` from wp-include/post-content.php to sf-header-forum.php, around line 77 (just inside `function sf_setup_header`).  Rename the copied version `the_forum_content()` 
+	
+	1. Throughout the simple-forum plugin folder tree, change `the_content` to `the_forum_content`
+	
+	1. On the forum page template (if necessary, create one -- you can copy your default page template -- and select it for the forum page), change `the_content` to `the_forum_content`.
+	
+	1. In sf-hooks.php, change the line  
+
+		`add_filter('sf_save_post_content', sf_package_links', 10);`  
+	
+		to  
+
+		`add_filter('sf_show_post_content', 'sf_package_links', 10);`  
+
+	1. At the bottom of emoba.php, after the other "`add_filter`"s, add the line  
+
+		`add_filter('sf_show_post_content', 'emoba_replace');`  
+
