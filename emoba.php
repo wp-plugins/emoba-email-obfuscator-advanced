@@ -254,4 +254,4 @@ For use with Simple:Press Forum, only after SPF has been modified:
    changed to
   	 add_filter('sf_show_post_content', 'sf_package_links', 10);
 ****/
-add_filter('sf_show_post_content', 'emoba_replace'); // Priority no greater than 10
+add_filter('sf_show_post_content', 'emoba_replace'); // Priority no greater than 10 (default)
