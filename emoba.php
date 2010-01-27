@@ -2,7 +2,7 @@
 /*
 Plugin Name: emObA
 Description: emObA - Email Obfuscator Advanced -- Scans pages, posts, comments for email addresses and creates mailto links which are difficult for 'bot harvesters to find. Typing A@B.C results in a "A-B-C" link;  href="mailto:" links are preserved but obfuscated; the special occurrence "[EMAIL Name A@B.C]"  is recognized and results in a link on "Name".  Without JavaScript, hovering  pops up the email with graphic glyphs for "@" and ".".  (Based on eMob Email Obfuscator 1.1 by Billy Halsey.)
-Version: 1.2.5
+Version: 1.3
 License: GPL
 Author: Kim Kirkpatrick
 Author URI: http://kirknet/wpplugins
@@ -90,10 +90,9 @@ function emoba_textify_email($email) {
 
 
 /****
-This is the RE expression for detecting email addresses. (The result found is returned as $match[email].)
+This is the RE expression for detecting email addresses.
 ****/
-define( "EMAIL",
-        "(?P<email>[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4})" );
+define( "EMAIL", "([A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4})" );
 
 
 /****
@@ -120,7 +119,7 @@ function emoba_addJScript($email, $ename, $id) {
   var linkNode = document.createElement('a');
   linkNode.title = 'Send email';
   linkNode.id = '$id';
-  var mailtolink = mailtostring + '$link';
+  var mailtolink = mailtostring + "$link";
   linkNode.href = mailtolink;
 AJS;
 if (true == CLICKPOP) {
@@ -158,43 +157,45 @@ The main function.
 
 function emoba_replace($content) {
 
-// (1) convert full  <a href="mailto:A@B.C >Name</a>  links
+// (1) convert full  <a xxx href="mailto:A@B.C?zzz" yyy>Name</a>  links
 
   $content = preg_replace_callback(
-    '!<a(.*?)href="mailto:' .EMAIL. '"[^>]*>(?P<name>[^<]+)</a>!i',
+    '!<a(?:.*)href="mailto:' .EMAIL. '([^"]*)"[^>]*>(.+)</a>!i',
     create_function(
       '$match',
-      '$em_email = $match[email];
-			$em_name = $match[name];
+      '$em_email = $match[1].$match[2];
+			$em_name = $match[3];
 			$id = "emoba-" . rand(1000, 9999);
 			$repaddr = "<span id=\"$id\">";
 			$repaddr .= emoba_readable_email($em_email, $em_name) . "</span>\n";
 			$repaddr .= emoba_addJScript($em_email, $em_name, $id);
-			$repaddrs[] = $repaddr;
 			return $repaddr;' ),
     $content );
+
 
 //  We can now remove mailto:'s from any remaining  mailto:A@B.C
 //  (This won't affect the full links just processed, since they no longer contain the string linkto:A@B.C)
 
   $content = preg_replace("!mailto:".EMAIL."!i", '$1', $content);
 
-// (2) Convert the special pattern [Name] A@B.C to email link <a href="mailto:A@B.C >Name</a>
-// (2) Convert the special pattern [EMAIL Name A@B.C] to email link <a href="mailto:A@B.C >Name</a>
+
+// // legacy (2) Convert the special pattern [Name] A@B.C to email link <a href="mailto:A@B.C >Name</a>
+// (2) Convert the special pattern [EMAIL Name | A@B.C] to email link <a href="mailto:A@B.C >Name</a>
 
   $content = preg_replace_callback(
-//    "!\[(?P<name>[^]]+)\]([\s]|&nbsp;)*".EMAIL."!", // [Name] A@B.C
-    "!\[EMAIL([\s]|&nbsp;)+(?P<name>[a-zA-Z0-9]+(([\s]|&nbsp;)[a-zA-Z0-9_-]+)*)([\s]|&nbsp;)+" . EMAIL . "([\s]|&nbsp;)*]!", // [EMAIL Name A@B.C]
+// legacy    '!\[([^]]+)\](?:[\s]|&nbsp;)*'.EMAIL.'!',   // [Name] A@B.C
+    '!\[EMAIL(?:[\s]|&nbsp;)+([^|]+)(?:(?:[\s]|&nbsp;)*[|](?:[\s]|&nbsp;)*)'.EMAIL.'(?:[\s]|&nbsp;)*]!', // [EMAIL Name | A@B.C ]
     create_function(
       '$match',
-			'$em_email = $match[email];
-			$em_name = $match[name];
+			'$em_email = $match[2];
+			$em_name = $match[1];
 			$id = "emoba-" . rand(1000, 9999);
 			$repaddr = "<span id=\"$id\">";
 			$repaddr .= emoba_readable_email($em_email, $em_name). "</span>\n";
 			$repaddr .= emoba_addJScript($em_email, $em_name, $id);
 			return $repaddr;' ),
     $content );
+
 
 if (true == BARE_TO_LINK ) {
 
@@ -204,8 +205,9 @@ if (true == BARE_TO_LINK ) {
     '!'.EMAIL.'!',
     create_function(
       '$match',
-			'$em_email = $match[email];
-			$em_name = emoba_textify_email($em_email);
+			'$em_email = $match[1];
+			$em_name = emoba_glyph_email($em_email);  // This line throws xhtml validation error -- glyphed link
+      //$em_name = emoba_textify_email($em_email);  // Use this line instead, to avoid validation error -- text link
 			$readable_email = emoba_glyph_email($em_email);
 			$id = "emoba-" . rand(1000, 9999);
 			$repaddr = "<span id=\"$id\">";
@@ -216,17 +218,16 @@ if (true == BARE_TO_LINK ) {
 
 }else{
 
-// (3) Convert any remaining addresses A@B.C to the glyphed form A [at] B [dot] C
+// (3) Convert any remaining addresses A@B.C to the form  A [at-glyph] B [dot-glyph] C
 
   $content = preg_replace_callback(
     '!'.EMAIL.'!',
     create_function(
       '$match',
-			'$em_email = $match[email];
-			$em_name = emoba_textify_email($em_email);
-			$readable_email = emoba_glyph_email($em_email);
-			$repaddr = $readable_email;
-			return $repaddr;' ),
+			'$em_email = $match[1];
+			$readable_email = emoba_glyph_email($em_email);    // Display glyphed email address
+		  //$readable_email = emoba_textify_email($em_email);  // Display A ^ B C for address
+			return $readable_email;' ),
     $content );
 
 }
@@ -247,11 +248,13 @@ add_filter('author_email', 'emoba_replace');
 add_filter('comment_email', 'emoba_replace');
 
 /****
-For use with Simple:Press Forum, only after SPF has been modified:
-	1. the_content -> the_forum_content (throughout SPF files and on forum page template
-	2. copy function the_content from wp-include/post-content.php to sf-header-forum.php around line 77 (just inside function sf_setup_header); rename the copied version the_forum_content()
-	3. add_filter('sf_save_post_content', 'sf_package_links', 10);
-   changed to
+For use with Simple:Press Forum, only after SPF has been modified as follows (not for the faint-of-heart!):
+	1. Change the_content -> the_forum_content (throughout SPF files and on forum page template)
+	2. Copy entire function the_content() from wp-include/post-content.php to sf-header-forum.php (around line 77, just inside function sf_setup_header); rename the copied version the_forum_content()
+	3. In sp-hooks.php, change add_filter('sf_save_post_content', 'sf_package_links', 10);
+   to
   	 add_filter('sf_show_post_content', 'sf_package_links', 10);
+UNCOMMENT the next two add_filter lines to use modified SPF with emObA
 ****/
-add_filter('sf_show_post_content', 'emoba_replace'); // Priority no greater than 10 (default)
+// add_filter('sf_show_post_content', 'emoba_replace'); // Priority no greater than 10 (default)
+// add_filter('the_forum_content', 'emoba_replace', 1);
