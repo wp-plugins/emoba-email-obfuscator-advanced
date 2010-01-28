@@ -23,9 +23,9 @@ It recognizes, and produces obfuscated active (click-to-send) email links for,
 
 These will appear as standard email links displaying "Name". A bare email link, since it has no Name, will appear as the email address itself, punctuated with graphic icons in place of @ and . 
  
-This is accomplished with a combination of WordPress filter hooks and JavaScript. If the browser is JavaScript-enabled, visitors to the site will see active email address links. If JavaScript is not enabled, hovering over the "link" will bring up a popup showing the email in human-readable form, eg `you [@] example [.] com`.  The [@] and [.] are  graphic images, not text, so the parts of the address are separated by lengthy runs of html (`<img ... />`).
+This is accomplished with a combination of WordPress filter hooks and JavaScript. If the browser is JavaScript-enabled, visitors to the site will see active email address links. If JavaScript is not enabled, the email is displayed in human-readable form, eg `you [@] example [.] com`, where the [@] and [.] are  graphic images, not text. This separates the parts of the address by lengthy runs of html (`<img ... />`) to hide them from 'bots.
 
-The email addresses occur in the HTML source only in a well-hidden encoding.  The email address is converted to hexadecimal and appears only as the value of a JavaScript variable.  That encoded email is separated in the JavaScript from the telltale `mailto:` to further confuse spambots.  The no-JavaScript popup address is encoded in the html with graphics representing `@` and `.`, so even a fairly smart spambot will not be led easily to the address.
+The email addresses occur in the HTML source only in a well-hidden encoding.  The email address is converted to hexadecimal and appears only as the value of a JavaScript variable.  That encoded email is separated in the JavaScript from the telltale `mailto:` to further confuse spambots.  The no-JavaScript address is encoded in the html with graphics representing `@` and `.`, so even a fairly smart spambot will not be led easily to the address.
 
 
 == Installation ==
@@ -42,7 +42,7 @@ emoBA 1.2 contains a serious bug when served using certain PHP versions, probabl
 == Changelog ==
 
 = 1.3 =
-2010/01/27  Fixed problem causing link not to be displayed -- may occur under PHP 5.2.6 and older (due to the named-subpattern bug in preg_replace_callback). Added "easy to write" email tag to  `[EMAIL Name | A@B.C]`.  Conversion of the email anchor allows (but ignores) other attributes besides href, and allows extended mailto: syntax (eg, ?subject=...). Introduced `BARE_TO_LINK` choice. Changed default textifying characters from dashes to hook and comma. Cleaned up code, JavaScript. 
+2010/01/27  Fixed problem causing link not to be displayed -- may occur under PHP 5.2.6 and older (due to the named-subpattern bug in preg_replace_callback). Added "easy to write" email tag `[EMAIL Name | A@B.C]`. Conversion of an email anchor allows (but ignores) other attributes besides href, and allows extended mailto: syntax (eg, ?subject=...). Introduced `BARE_TO_LINK` choice. Changed default textifying characters from dashes to hook and comma. Cleaned up code, JavaScript. 
 = 1.2 =
 2009/11/19  Fixed repeat email bug: correctly treats identical repeat emails (of all types).  Now converts emails placed in text widgets (requires WP 2.3).  Fixed problem with multiple spaces in the special form  [name]   a@b.cc .  Introduced `CLICKPOP`.
 = 1.1 = 
