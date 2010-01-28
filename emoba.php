@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: emObA
-Description: emObA - Email Obfuscator Advanced -- Scans pages, posts, comments for email addresses and creates mailto links which are difficult for 'bot harvesters to find. Typing A@B.C results in a "A-B-C" link;  href="mailto:" links are preserved but obfuscated; the special occurrence "[EMAIL Name A@B.C]"  is recognized and results in a link on "Name".  Without JavaScript, hovering  pops up the email with graphic glyphs for "@" and ".".  (Based on eMob Email Obfuscator 1.1 by Billy Halsey.)
+Description: emObA - Email Obfuscator Advanced -- Scans pages, posts, comments for email addresses and creates mailto links which are difficult for 'bot harvesters to find. Typing A@B.C results in a "A@B.C" link, with grahic representations of "@"and "."; html anchor links with href="mailto:" are obfuscated; the special occurrence "[EMAIL Name | A@B.C]"  is recognized and results in an obfuscated link on "Name".  Without JavaScript, hovering pops up the email with graphic glyphs for "@" and ".".  (Based on eMob Email Obfuscator 1.1 by Billy Halsey.)
 Version: 1.3
 License: GPL
 Author: Kim Kirkpatrick
@@ -24,11 +24,17 @@ Author URI: http://kirknet/wpplugins
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+/****
+If LEGACY is true, the old "simple" form `[Name] A@B.C` will be converted to an email link. This can be turned off to avoid problems with WordPress shortcuts, in which case the email will be treated as bare, preceded by [Name].
+Regardless of the value of LEGACY, the new form `[EMAIL Name | A@B.C]` will be converted.
+****/
+define ("LEGACY", false);
+
 
 /****
 If CLICKPOP is true, hovering over the link "addr" changes it to "Click to email addr".  (This switch has no effect if JavaScript is off.)
 ****/
-define ("CLICKPOP", true);
+define ("CLICKPOP", false);
 
 
 /****
@@ -73,18 +79,20 @@ This constructs a glyphed email address for use when JavaScript is not available
 ****/
 function emoba_readable_email($email="", $name="(Hover)" ) {
   $glyph_email = emoba_glyph_email($email);
-  $addr = '<span class="emoba-pop">' . $name . '<span>&nbsp;&nbsp;';
+  $addr = '<span class="emoba-pop">' . $name . '<span ';
+//  $addr .= ((true == CLICKPOP)? 'class="emoba-hover"' : '');
+  $addr .= '>&nbsp;&nbsp;';
   $addr .= $glyph_email . '&nbsp;&nbsp;</span></span>';
   return $addr;
 }
 
 
 /****
-This replaces "@" and "." with " ^ " and " " in $email; used for bare (nameless) emails
+This replaces "@" and "." with " ^ " and "  " in $email; used for bare (nameless) emails
 ****/
 function emoba_textify_email($email) {
-  $email = str_replace('@', ' ^ ', $email);
-  $email = str_replace('.', ' ', $email);
+  $email = str_replace('@', '&nbsp;^&nbsp;', $email);
+  $email = str_replace('.', '&nbsp;,&nbsp;', $email);
   return  $email ;
 }
 
@@ -179,12 +187,10 @@ function emoba_replace($content) {
   $content = preg_replace("!mailto:".EMAIL."!i", '$1', $content);
 
 
-// // legacy (2) Convert the special pattern [Name] A@B.C to email link <a href="mailto:A@B.C >Name</a>
 // (2) Convert the special pattern [EMAIL Name | A@B.C] to email link <a href="mailto:A@B.C >Name</a>
 
   $content = preg_replace_callback(
-// legacy    '!\[([^]]+)\](?:[\s]|&nbsp;)*'.EMAIL.'!',   // [Name] A@B.C
-    '!\[EMAIL(?:[\s]|&nbsp;)+([^|]+)(?:(?:[\s]|&nbsp;)*[|](?:[\s]|&nbsp;)*)'.EMAIL.'(?:[\s]|&nbsp;)*]!', // [EMAIL Name | A@B.C ]
+    '!\[EMAIL(?:[\s]|&nbsp;)+([^|]+)(?:(?:[\s]|&nbsp;)*[|](?:[\s]|&nbsp;)*)'.EMAIL.'(?:[\s]|&nbsp;)*]!',
     create_function(
       '$match',
 			'$em_email = $match[2];
@@ -196,8 +202,27 @@ function emoba_replace($content) {
 			return $repaddr;' ),
     $content );
 
+if ( true == LEGACY ) {
 
-if (true == BARE_TO_LINK ) {
+// (2') (Legacy) Convert the special pattern [Name] A@B.C to email link <a href="mailto:A@B.C >Name</a>
+
+  $content = preg_replace_callback(
+    '!\[([^]]+)\](?:[\s]|&nbsp;)*'.EMAIL.'!',
+    create_function(
+      '$match',
+			'$em_email = $match[2];
+			$em_name = $match[1];
+			$id = "emoba-" . rand(1000, 9999);
+			$repaddr = "<span id=\"$id\">";
+			$repaddr .= emoba_readable_email($em_email, $em_name). "</span>\n";
+			$repaddr .= emoba_addJScript($em_email, $em_name, $id);
+			return $repaddr;' ),
+    $content );
+
+}
+
+
+if ( true == BARE_TO_LINK ) {
 
 // (3) Convert any remaining addresses A@B.C to the link <a href="mailto:A@B.C">A ^ B C</a>
 
@@ -208,10 +233,9 @@ if (true == BARE_TO_LINK ) {
 			'$em_email = $match[1];
 			$em_name = emoba_glyph_email($em_email);  // This line throws xhtml validation error -- glyphed link
       //$em_name = emoba_textify_email($em_email);  // Use this line instead, to avoid validation error -- text link
-			$readable_email = emoba_glyph_email($em_email);
 			$id = "emoba-" . rand(1000, 9999);
 			$repaddr = "<span id=\"$id\">";
-			$repaddr .= $readable_email . "</span>\n";
+			$repaddr .= emoba_glyph_email($em_email) . "</span>\n";
 			$repaddr .= emoba_addJScript($em_email, $em_name, $id);
 			return $repaddr;' ),
     $content );
@@ -225,8 +249,8 @@ if (true == BARE_TO_LINK ) {
     create_function(
       '$match',
 			'$em_email = $match[1];
-			$readable_email = emoba_glyph_email($em_email);    // Display glyphed email address
-		  //$readable_email = emoba_textify_email($em_email);  // Display A ^ B C for address
+			//$readable_email = emoba_glyph_email($em_email);    // Display glyphed email address
+		  $readable_email = emoba_textify_email($em_email);  // Display A ^ B C for address
 			return $readable_email;' ),
     $content );
 
