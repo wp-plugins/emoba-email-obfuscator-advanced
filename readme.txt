@@ -75,7 +75,7 @@ This is a major modification of Email Obfuscator by Billy Halsey. That plugin se
 
 1. I don't like the hook and comma you use in the textified emails!
 
-  These can be edited to whatever text you want at lines 86 and 87 of emoba.php, in the function `emoba_textify_email()`.  (Just be careful not to lose the quotes.)  
+  These can be edited to whatever text you want at lines 94 and 95 of emoba.php, in the function `emoba_textify_email()`.  (Just be careful not to lose the quotes.)  
 
 1. What about styling and appearance?
 
