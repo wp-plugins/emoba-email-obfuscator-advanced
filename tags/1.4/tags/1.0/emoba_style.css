@@ -1,0 +1,22 @@
+/**************************
++ Email Obfuscator Popups 
+***************************/
+.emoba-pop {
+	color: #579;
+}
+.emoba-pop span {
+	display: none;
+} 
+.emoba-pop:hover span {
+	display: inline;
+}
+.emoba-pop span span{
+	margin-left: 2px;
+	margin-right: 2px;
+}
+span.emoba-glyph {
+}
+span.emoba-em {
+	font-family: "Courier New";
+}
+
