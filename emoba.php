@@ -45,7 +45,7 @@ define ("CLICKPOP", true);
 If GLYPHS is true, glyphs will be used, text otherwise, for replacing @ and . in displayed emails.
 The glyphs may create an xhtml validation error. (I haven't been able to avoid these errors because a "feature" of WordPress prevents the use of CDATA brackets to hide html in inserted JavaScript.)
 ****/
-define("GLYPHS", true);
+define("GLYPHS", false);
 
 /****
 If LEGACY is true, the old "simple" form `[Name] A@B.C` will be converted to an email link. This can be turned off to avoid problems with WordPress shortcuts, in which case the email will be treated as bare, preceded by [Name].
