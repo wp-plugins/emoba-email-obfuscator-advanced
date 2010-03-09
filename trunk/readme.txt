@@ -3,10 +3,10 @@ Author: Kim Kirkpatrick
 Contributors:  kirkpatrick
 Donate link: http://kirknet.org/wpplugins/
 Tags: spam, email, mail, address, addresses, hide, JavaScript
-Requires at least: 2.3
-Tested up to: 2.9.1
+Requires at least: 2.8
+Tested up to: 2.9.2
 Stable tag: 1.3
-Version: 1.3
+Version: 1.4
 
 == Description ==
 
@@ -21,9 +21,11 @@ It recognizes, and produces obfuscated active (click-to-send) email links for,
 
  * a bare email address `you@example.com` (with or without "mailto:" in front of it)  
 
-These will appear as standard email links displaying "Name". A bare email link, since it has no Name, will appear as the email address itself, punctuated with graphic icons in place of @ and . 
+These will appear as standard email links displaying "Name". A bare email link, since it has no Name, will appear as the email address itself.
+
+If Name is itself the email, it will be obfuscated with either text or graphic symbols
  
-This is accomplished with a combination of WordPress filter hooks and JavaScript. If the browser is JavaScript-enabled, visitors to the site will see active email address links. If JavaScript is not enabled, the email is displayed in human-readable form, eg `you [@] example [.] com`, where the [@] and [.] are  graphic images, not text. This separates the parts of the address by lengthy runs of html (`<img ... />`) to hide them from 'bots.
+This is accomplished with a combination of WordPress filter hooks and JavaScript. If the browser is JavaScript-enabled, visitors to the site will see active email address links. If JavaScript is not enabled, the email is displayed in human-readable form, eg `you [@] example [.] com`, where the [@] and [.] are  text symbols or graphic images. In the case of graphic symbols, this separates the parts of the address by lengthy runs of html (`<img ... />`) to hide them from 'bots.
 
 The email addresses occur in the HTML source only in a well-hidden encoding.  The email address is converted to hexadecimal and appears only as the value of a JavaScript variable.  That encoded email is separated in the JavaScript from the telltale `mailto:` to further confuse spambots.  The no-JavaScript address is encoded in the html with graphics representing `@` and `.`, so even a fairly smart spambot will not be led easily to the address.
 
@@ -34,13 +36,16 @@ The email addresses occur in the HTML source only in a well-hidden encoding.  Th
 
 2. From your wp-admin screen, activate the plugin emObA - Email Obfuscator Advanced.    
 
+3. You may open emoba.php with a text editor and set a number of configuration items (documented there).  There is no administrative configuration screen at present.
 
 == Upgrade notice ==
-emoBA 1.2 contains a serious bug when served using certain PHP versions, probably 5.2.6 and earlier, in which no link data is displayed (perhaps leading to no visible display of the email link). This has been fixed in 1.3. 
+emoBA 1.3 and 1.4 require WP 2.8+
 
 
 == Changelog ==
 
+= 1.4 =
+2010/03/10 Bugfix: now correctly allows extended email syntax "email?subject=yyy". Bugfix: now correctly allows extra spaces within shortcode [EMAIL | ].  Email link may exhibit email: `<a href="mailto:aa@bb.cc">aa@bb.cc</a>`; the exhibited email will be obfuscated. 
 = 1.3 =
 2010/01/27  Fixed problem causing link not to be displayed -- may occur under PHP 5.2.6 and older (due to the named-subpattern bug in preg_replace_callback). Added "easy to write" email tag `[EMAIL Name | A@B.C]`. Conversion of an email anchor allows (but ignores) other attributes besides href, and allows extended mailto: syntax (eg, ?subject=...). Introduced `BARE_TO_LINK` choice. Changed default textifying characters from dashes to hook and comma. Cleaned up code, JavaScript. 
 = 1.2 =
@@ -158,3 +163,4 @@ This is a major modification of Email Obfuscator by Billy Halsey. That plugin se
 	1. At the bottom of emoba.php, after the other "`add_filter`"s, add the line  
 
 		`add_filter('sf_show_post_content', 'emoba_replace');`
+	
