@@ -42,10 +42,10 @@ If CLICKPOP is true, hovering over the link "addr" changes it to "Click to email
 define ("CLICKPOP", true);
 
 /****
-If VALID is true, glyph forms will not be used where they create an xhtml validation error.
-(I haven't been able to avoid these errors because a "feature" of WordPress prevents the use of CDATA brackets to hide html in inserted JavaScript.)
+If GLYPHS is true, glyphs will be used, text otherwise, for replacing @ and . in displayed emails.
+The glyphs may create an xhtml validation error. (I haven't been able to avoid these errors because a "feature" of WordPress prevents the use of CDATA brackets to hide html in inserted JavaScript.)
 ****/
-define("VALID", false);
+define("GLYPHS", true);
 
 /****
 If LEGACY is true, the old "simple" form `[Name] A@B.C` will be converted to an email link. This can be turned off to avoid problems with WordPress shortcuts, in which case the email will be treated as bare, preceded by [Name].
@@ -98,7 +98,7 @@ function emoba_glyph_email($email) {
 This constructs a glyphed or textified email address
 ****/
 function emoba_readable_email($email="", $name="(Hover)" ) {
-  $transformed_email = (VALID) ? emoba_textify_email($email) : emoba_glyph_email($email);
+  $transformed_email = (GLYPHS) ? emoba_glyph_email($email) : emoba_textify_email($email);
   $addr = '<span class="emoba-pop">' . $name . '<span ';
   $addr .= '>&nbsp;&nbsp;';
   $addr .= $transformed_email . '&nbsp;&nbsp;</span></span>';
@@ -188,7 +188,7 @@ function emoba_replace($content) {
     create_function(
       '$match',
       '$em_email = $match[1].$match[2];
-			$em_name = (VALID) ? emoba_textify_email($match[3]) : emoba_glyph_email($match[3]);
+			$em_name = (GLYPHS) ? emoba_glyph_email($match[3]) : emoba_textify_email($match[3]);
 			$id = "emoba-" . rand(1000, 9999);
 			$repaddr = "<span id=\"$id\">";
 			$repaddr .= emoba_readable_email($em_email, $em_name) . "</span>\n";
@@ -210,7 +210,7 @@ function emoba_replace($content) {
     create_function(
       '$match',
 			'$em_email = $match[2];
-			$em_name = (VALID) ? emoba_textify_email($match[1]) : emoba_glyph_email($match[1]);
+			$em_name = (GLYPHS) ? emoba_glyph_email($match[1]) : emoba_textify_email($match[1]);
 			$id = "emoba-" . rand(1000, 9999);
 			$repaddr = "<span id=\"$id\">";
 			$repaddr .= emoba_readable_email($em_email, $em_name). "</span>\n";
@@ -227,7 +227,7 @@ if ( true == LEGACY ) {
     create_function(
       '$match',
 			'$em_email = $match[2];
-			$em_name = (VALID) ? emoba_textify_email($match[1]) : emoba_glyph_email($match[1]);
+			$em_name = (GLYPHS) ? emoba_glyph_email($match[1]) : emoba_textify_email($match[1]);
 			$id = "emoba-" . rand(1000, 9999);
 			$repaddr = "<span id=\"$id\">";
 			$repaddr .= emoba_readable_email($em_email, $em_name). "</span>\n";
@@ -247,7 +247,7 @@ if ( true == BARE_TO_LINK ) {
     create_function(
       '$match',
 			'$em_email = $match[1];
-			$em_name = (VALID) ? emoba_textify_email($em_email) : emoba_glyph_email($em_email);
+			$em_name = (GLYPHS) ? emoba_glyph_email($em_email) : emoba_textify_email($em_email);
 			$id = "emoba-" . rand(1000, 9999);
 			$repaddr = "<span id=\"$id\">";
 			$repaddr .= emoba_glyph_email($em_email) . "</span>\n";
@@ -263,7 +263,7 @@ if ( true == BARE_TO_LINK ) {
     create_function(
       '$match',
 			'$em_email = $match[1];
-		  $readable_email = (VALID) ? emoba_textify_email($em_email) : emoba_glyph_email($em_email);
+		  $readable_email = (GLYPHS) ? emoba_glyph_email($em_email) : emoba_textify_email($em_email);
 			return $readable_email;' ),
     $content );
 
