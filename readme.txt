@@ -17,9 +17,9 @@ It recognizes, and produces obfuscated active (click-to-send) email links for,
 
  * standard email links (`<a href="mailto:you@example.com">Name</a>`), allowing (but ignoring) additional attributes both before and after the href attribute, and allowing a subject using the syntax `mailto:you@example.com?subject=...`.  
 
- * the special "easy to write" form  `[EMAIL Name | you@example.com]` (changed from the earlier versions' much more fragile `[Name] you@example.com`, which remains available via the LEGACY flag)  
+ * the special "easy to write" form  `[EMAIL Name | you@example.com]`, also allowing the `?subject=... ]` syntax.  (Earlier versions' much more fragile `[Name] you@example.com` remains available if the LEGACY flag is true.)  
 
- * a bare email address `you@example.com` (with or without "mailto:" in front of it)  
+ * a bare email address `you@example.com` (with or without "mailto:" in front of it; `?subject=` syntax not allowed here)  
 
 These will all appear as active email links displaying "Name". In the cases of a bare email link (one which has no Name) or a link in which the Name is the email itself, the link will show as the email displayed in human-readable form, eg `you [@] example [.] com`, where the [@] and [.] are  text symbols or graphic images to hide them from spambots. 
  
@@ -45,7 +45,7 @@ emoBA 1.3+ requires WP 2.8+.
 == Changelog ==
 
 = 1.5 =
-2010/03/16 Using graphics in email obfuscation (`GLYPHS=true`) no longer causes xhtml validation errors. 
+2010/03/16 Using graphics in email obfuscation (`GLYPHS=true`) no longer causes xhtml validation errors. `?subject=` syntax allowed in `[EMAIL | ]` form.
 = 1.4 =
 2010/03/09 Bugfix: now correctly allows extended email syntax "email?subject=yyy". Bugfix: now correctly allows extra spaces within shortcode [EMAIL | ].  Email link may exhibit email: `<a href="mailto:aa@bb.cc">aa@bb.cc</a>`; the exhibited email will be obfuscated. 
 = 1.3 =

@@ -58,10 +58,9 @@ Regardless of the value of LEGACY, the new form `[EMAIL Name | A@B.C]` will be p
 ****/
 define ("LEGACY", false);
 
-
 /****
 Here we designate the symbols used for at/dot separators in the displayed email addresses.
-You may want to change the alts or i18n them, or choose different symbols.
+You may want to change the alts or i18n them.
 ****/
 if (true == GLYPHS) {
 	define('AT_SYMBOL', '<img src="'.plugin_dir_url(__FILE__).'at-glyph.gif"  alt="at"  class="emoba-glyph" />' );
@@ -97,10 +96,12 @@ function emoba_readable_email($email="", $name="(Hover)" ) {
   return $addr;
 }
 
+
 /****
 This is the RE expression for detecting email addresses.
 ****/
 define( "EMAIL", "([A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4})" );
+
 
 /****
 This converts the email's string of character ordinals to %-hex representation
@@ -119,8 +120,9 @@ function emoba_hexify_mailto($mailto) {
    return $hexified;
 }
 
+
 /****
-Insert the JavaScript needed to create the email link and popup
+The JavaScript for creating the email link and popup
 ****/
 function emoba_addJScript($email, $ename, $id) {
   $link   = emoba_hexify_mailto($email);
@@ -147,7 +149,7 @@ function emoba_replace($content) {
 // (1) convert full email link <a xxx href="mailto:A@B.C?subject=sss" yyy>Name</a>
 
   $content = preg_replace_callback(
-    '!<a(?:.*)href="mailto:' .EMAIL. '([^"]*)"[^>]*>(.+)</a>!i',
+    '!<a(?:.*)href="mailto:' .EMAIL. '([?][^"]*)"[^>]*>(.+)</a>!i',
     create_function(
       '$match',
       '$em_email = $match[1].$match[2];
@@ -169,10 +171,10 @@ function emoba_replace($content) {
 // (2) Convert the special pattern [EMAIL Name | A@B.C] to email link <a href="mailto:A@B.C >Name</a>
 //     Allows any number of spaces at each position within [EMAIL|]
   $content = preg_replace_callback(
-    '!\[EMAIL(?:[\s]|&nbsp;)*([^|]+)(?:(?:[\s]|&nbsp;)*[|](?:[\s]|&nbsp;)*)'.EMAIL.'(?:[\s]|&nbsp;)*]!',
+    '!\[EMAIL(?:[\s]|&nbsp;)*([^|]+)(?:(?:[\s]|&nbsp;)*[|](?:[\s]|&nbsp;)*)'.EMAIL.'([?][^]]*?)(?:[ ]|&nbsp;)*]!',
     create_function(
       '$match',
-			'$em_email = $match[2];
+			'$em_email = $match[2].$match[3];
 			$em_name = emoba_symb_email($match[1]);
 			$id = "emoba-" . rand(1000, 9999);
 			$repaddr = "<span id=\"$id\">";
