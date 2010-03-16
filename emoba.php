@@ -48,19 +48,20 @@ If GLYPHS is true, glyphs will be used, text otherwise, for replacing @ and . in
 define("GLYPHS", true);
 
 /****
-If LEGACY is true, the old "simple" form `[Name] A@B.C` will be converted to an email link. This can be turned off to avoid problems with WordPress shortcuts, in which case the email will be treated as bare, preceded by [Name].
-Regardless of the value of LEGACY, the new form `[EMAIL Name | A@B.C]` will be properly converted.
-****/
-define ("LEGACY", true);
-
-/****
 If BARE_TO_LINK is true, bare emails (a@b.c) will be converted to a link.  If false, the email will appear in the glyph form, but there will be no link.
 ****/
 define ("BARE_TO_LINK", true);
 
 /****
+If LEGACY is true, the old "simple" form `[Name] A@B.C` will be converted to an email link. This can be turned off to avoid problems with WordPress shortcuts, in which case the email will be treated as bare, preceded by [Name].
+Regardless of the value of LEGACY, the new form `[EMAIL Name | A@B.C]` will be properly converted.
+****/
+define ("LEGACY", false);
+
+
+/****
 Here we designate the symbols used for at/dot separators in the displayed email addresses.
-You may want to change the alts or i18n them.
+You may want to change the alts or i18n them, or choose different symbols.
 ****/
 if (true == GLYPHS) {
 	define('AT_SYMBOL', '<img src="'.plugin_dir_url(__FILE__).'at-glyph.gif"  alt="at"  class="emoba-glyph" />' );
@@ -96,12 +97,10 @@ function emoba_readable_email($email="", $name="(Hover)" ) {
   return $addr;
 }
 
-
 /****
 This is the RE expression for detecting email addresses.
 ****/
 define( "EMAIL", "([A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4})" );
-
 
 /****
 This converts the email's string of character ordinals to %-hex representation
@@ -120,9 +119,8 @@ function emoba_hexify_mailto($mailto) {
    return $hexified;
 }
 
-
 /****
-The JavaScript for creating the email link and popup
+Insert the JavaScript needed to create the email link and popup
 ****/
 function emoba_addJScript($email, $ename, $id) {
   $link   = emoba_hexify_mailto($email);

@@ -15,19 +15,17 @@ This plugin effectively and automatically makes it very difficult for spambots t
 
 It recognizes, and produces obfuscated active (click-to-send) email links for, 
 
- * standard email links (`<a href="mailto:you@example.com">Name</a>`), allowing (but ignoring) additional attributes both before and after the href attribute, and allowing the extended mailto: syntax (eg, ?subject=...)  
+ * standard email links (`<a href="mailto:you@example.com">Name</a>`), allowing (but ignoring) additional attributes both before and after the href attribute, and allowing a subject using the syntax `mailto:you@example.com?subject=...`.  
 
- * the special "easy to write" form  `[EMAIL Name | A@B.C]` (changed from the earlier versions' much more fragile `[Name] you@example.com`, which remains available via the LEGACY flag)  
+ * the special "easy to write" form  `[EMAIL Name | you@example.com]` (changed from the earlier versions' much more fragile `[Name] you@example.com`, which remains available via the LEGACY flag)  
 
  * a bare email address `you@example.com` (with or without "mailto:" in front of it)  
 
-These will appear as standard email links displaying "Name". A bare email link, since it has no Name, will appear as the email address itself.
-
-If the Name is itself the email, it will be obfuscated with either text or graphic symbols
+These will all appear as active email links displaying "Name". In the cases of a bare email link (one which has no Name) or a link in which the Name is the email itself, the link will show as the email displayed in human-readable form, eg `you [@] example [.] com`, where the [@] and [.] are  text symbols or graphic images to hide them from spambots. 
  
-This is accomplished with a combination of WordPress filter hooks and JavaScript. If the browser is JavaScript-enabled, visitors to the site will see active email address links. If JavaScript is not enabled, the email is displayed in human-readable form, eg `you [@] example [.] com`, where the [@] and [.] are  text symbols or graphic images. In the case of graphic symbols, this separates the parts of the address by lengthy runs of html (`<img ... />`) to hide them from 'bots.
+This is accomplished with a combination of WordPress filter hooks and JavaScript. (If JavaScript is not enabled, the link will not be active.)
 
-The email addresses occur in the HTML source only in a well-hidden encoding.  The email address is converted to hexadecimal and appears only as the value of a JavaScript variable.  That encoded email is separated in the JavaScript from the telltale `mailto:` to further confuse spambots.  The no-JavaScript address is encoded in the html with graphics representing `@` and `.`, so even a fairly smart spambot will not be led easily to the address.
+The email addresses occur in the HTML source only in a well-hidden encoding.  The email address is converted to hexadecimal and appears only as the value of a JavaScript variable.  That encoded email is separated in the JavaScript from the telltale `mailto:` to further confuse spambots. 
 
 
 == Installation ==
@@ -36,17 +34,18 @@ The email addresses occur in the HTML source only in a well-hidden encoding.  Th
 
 2. From your wp-admin screen, activate the plugin emObA - Email Obfuscator Advanced.    
 
-3. You may open emoba.php with a text editor and set a number of configuration items (documented there).  There is no administrative configuration screen at present.
+3. You may open emoba.php with a text editor and set a number of configuration items (documented there, and in the FAQ).  There is no administrative configuration screen at present.
+
 
 == Upgrade notice ==
-emoBA 1.3+ require WP 2.8+.  
-(If needed for WP2.3+, hard-code the paths in emoba.php, around lines 31,32.)
+emoBA 1.3+ requires WP 2.8+.  
+(If needed for WP2.3+, you may hard-code appropriate paths around lines 31,32 of emoba.php.)
 
 
 == Changelog ==
 
 = 1.5 =
-2010/03/16 Now graphics in email obfuscation do not cause xhtml validation errors. 
+2010/03/16 Using graphics in email obfuscation (`GLYPHS=true`) no longer causes xhtml validation errors. 
 = 1.4 =
 2010/03/09 Bugfix: now correctly allows extended email syntax "email?subject=yyy". Bugfix: now correctly allows extra spaces within shortcode [EMAIL | ].  Email link may exhibit email: `<a href="mailto:aa@bb.cc">aa@bb.cc</a>`; the exhibited email will be obfuscated. 
 = 1.3 =
@@ -76,11 +75,11 @@ This is a major modification of Email Obfuscator by Billy Halsey. That plugin se
 
   When `CLICKPOP` is defined true, hovering over "Name" changes the link to "Click to email Name".
 
-1. What does the constant `BARE_TO_LINK` (defined at line 57 of emoba.php; default=true) do?
+1. What does the constant `BARE_TO_LINK` (defined at line 53 of emoba.php; default=true) do?
 
   When `BARE_TO_LINK` is defined true, a bare email (`A@B.C`) will appear as a link; if false, it will appear as a glyphed address, but will not be an active link.
   
-1. What does the constant `LEGACY` (defined at line 54 of emoba.php; default=false) do?
+1. What does the constant `LEGACY` (defined at line 59 of emoba.php; default=false) do?
 
   If LEGACY is true, the old "simple" form `[Name] A@B.C` will be converted to an email link. This can be turned off to avoid problems with WordPress shortcuts, in which case the email will be treated as bare, preceded by [Name].  
   Regardless of the value of LEGACY, the new form `[EMAIL Name | A@B.C]` will be converted.
@@ -172,4 +171,3 @@ This is a major modification of Email Obfuscator by Billy Halsey. That plugin se
 	1. At the bottom of emoba.php, after the other "`add_filter`"s, add the line  
 
 		`add_filter('sf_show_post_content', 'emoba_replace');`
-	
