@@ -1,4 +1,4 @@
-=== emObA ===
+=== emObA - Email Obfuscator Advanced ===
 Author: Kim Kirkpatrick
 Contributors:  kirkpatrick
 Donate link: http://kirknet.org/wpplugins/
