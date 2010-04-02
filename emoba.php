@@ -2,7 +2,7 @@
 /*
 Plugin Name: emObA
 Description: emObA (email Obfuscator Advanced) -- Scans pages, posts, comments for email addresses and creates mailto links which are difficult for 'bot harvesters to find. Typing A@B.C results in a "A@B.C" link, with grahic representations of "@"and "."; html anchor links with href="mailto:" are obfuscated; the special occurrence "[EMAIL Name | A@B.C]"  is recognized and results in an obfuscated link on "Name".  Without JavaScript, hovering pops up the email with graphic glyphs for "@" and ".".  (Based on eMob Email Obfuscator 1.1 by Billy Halsey.)
-Version: 1.5
+Version: 1.5.1
 License: GPL
 Author: Kim Kirkpatrick
 Author URI: http://kirknet/wpplugins
