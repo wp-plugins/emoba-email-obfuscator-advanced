@@ -1,4 +1,4 @@
-=== emObA - Email Obfuscator Advanced ===
+=== emObA ===
 Author: Kim Kirkpatrick
 Contributors:  kirkpatrick
 Donate link: http://kirknet.org/wpplugins/
@@ -10,7 +10,7 @@ Version: 1.5.1
 
 == Description ==
 
-This plugin effectively and automatically makes it very difficult for spambots to harvest email addresses from your WordPress-powered blog. Email addresses may be placed in posts, comments, and pages, plain, as html links, or in a special "easy email" form, and they are automatically protected by emObA. All email addresses appearing on your blog will appear on the screen (if JavaScript is enabled) as active links to normal, valid, and correct email addresses (the actual email appears in the status bar when hovering), but to spambots they will have no recognizable features.  
+emObA - Email Obfuscator Advanced - effectively and automatically makes it very difficult for spambots to harvest email addresses from your WordPress-powered blog. Email addresses may be placed in posts, comments, and pages, plain, as html links, or in a special "easy email" form, and they are automatically protected by emObA. All email addresses appearing on your blog will appear on the screen (if JavaScript is enabled) as active links to normal, valid, and correct email addresses (the actual email appears in the status bar when hovering), but to spambots they will have no recognizable features.  
 
 
 It recognizes, and produces obfuscated active (click-to-send) email links for, 
