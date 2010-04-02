@@ -5,8 +5,8 @@ Donate link: http://kirknet.org/wpplugins/
 Tags: spam, email, mail, address, addresses, hide, JavaScript
 Requires at least: 2.8
 Tested up to: 2.9.2
-Stable tag: 1.5
-Version: 1.5
+Stable tag: 1.5.1
+Version: 1.5.1
 
 == Description ==
 
@@ -38,14 +38,17 @@ The email addresses occur in the HTML source only in a well-hidden encoding.  Th
 
 
 == Upgrade notice ==
+1.5.1 is a bug fix.
 emoBA 1.3+ requires WP 2.8+.  
 (If needed for WP2.3+, you may hard-code appropriate paths around lines 31,32 of emoba.php.)
 
 
 == Changelog ==
 
+= 1.5.1 =
+2010/04/01 Bug fix. An editing slip in 1.5 broke ordinary links and [EMAIL | ].  Apologies.
 = 1.5 =
-2010/03/16 Using graphics in email obfuscation (`GLYPHS=true`) no longer causes xhtml validation errors. `?subject=` syntax allowed in `[EMAIL | ]` form.
+2010/04/01 Using graphics in email obfuscation (`GLYPHS=true`) no longer causes xhtml validation errors. `?subject=` syntax allowed in `[EMAIL | ]` form.
 = 1.4 =
 2010/03/09 Bugfix: now correctly allows extended email syntax "email?subject=yyy". Bugfix: now correctly allows extra spaces within shortcode [EMAIL | ].  Email link may exhibit email: `<a href="mailto:aa@bb.cc">aa@bb.cc</a>`; the exhibited email will be obfuscated. 
 = 1.3 =

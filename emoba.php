@@ -149,7 +149,7 @@ function emoba_replace($content) {
 // (1) convert full email link <a xxx href="mailto:A@B.C?subject=sss" yyy>Name</a>
 
   $content = preg_replace_callback(
-    '!<a(?:.*)href="mailto:' .EMAIL. '([?][^"]*)"[^>]*>(.+)</a>!i',
+    '!<a(?:.*)href="mailto:' .EMAIL. '([?][^"]*)?"[^>]*>(.+)</a>!i',
     create_function(
       '$match',
       '$em_email = $match[1].$match[2];
@@ -171,7 +171,7 @@ function emoba_replace($content) {
 // (2) Convert the special pattern [EMAIL Name | A@B.C] to email link <a href="mailto:A@B.C >Name</a>
 //     Allows any number of spaces at each position within [EMAIL|]
   $content = preg_replace_callback(
-    '!\[EMAIL(?:[\s]|&nbsp;)*([^|]+)(?:(?:[\s]|&nbsp;)*[|](?:[\s]|&nbsp;)*)'.EMAIL.'([?][^]]*?)(?:[ ]|&nbsp;)*]!',
+    '!\[EMAIL(?:[\s]|&nbsp;)*([^|]+)(?:(?:[\s]|&nbsp;)*[|](?:[\s]|&nbsp;)*)'.EMAIL.'([?][^]]*?)?(?:[ ]|&nbsp;)*]!',
     create_function(
       '$match',
 			'$em_email = $match[2].$match[3];
