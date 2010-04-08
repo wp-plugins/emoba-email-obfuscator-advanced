@@ -14,9 +14,10 @@
 	margin-left: 2px;
 	margin-right: 2px;
 }
-.emoba-glyph {
+img.emoba-glyph {
   border-width:0;
   height: 10px;
+  margin:0;
 }
 span.emoba-em {
 	font-family: "Courier New";
