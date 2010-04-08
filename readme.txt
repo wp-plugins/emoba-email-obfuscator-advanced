@@ -4,9 +4,9 @@ Contributors:  kirkpatrick
 Donate link: http://kirknet.org/wpplugins/
 Tags: spam, email, mail, address, addresses, hide, JavaScript
 Requires at least: 2.8
-Tested up to: 2.9.2
+Tested up to: 3.0
 Stable tag: 1.5.1
-Version: 1.5.1
+Version: 1.6
 
 == Description ==
 
@@ -38,7 +38,7 @@ The email addresses occur in the HTML source only in a well-hidden encoding.  Th
 
 
 == Upgrade notice ==
-1.5.1 is a bug fix.
+1.6 fixed css for WP3.0 default theme
 emoBA 1.3+ requires WP 2.8+.  
 (If needed for WP2.3+, you may hard-code appropriate paths around lines 31,32 of emoba.php.)
 
