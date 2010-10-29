@@ -146,10 +146,10 @@ The main function.
 
 function emoba_replace($content) {
 
-// (1) convert full email link <a xxx href="mailto:A@B.C?subject=sss" yyy>Name</a>
+// (1) convert full email link <a  href="mailto:A@B.C?subject=sss" >Name</a>
 
   $content = preg_replace_callback(
-    '!<a(?:.*)href="mailto:' .EMAIL. '([?][^"]*)?"[^>]*>(.+)</a>!i',
+    '!<a(?:[\s]|&nbsp;)*href="mailto:' .EMAIL. '([?][^"]*)?"[^>]*>([^<]*)</a>!i',
     create_function(
       '$match',
       '$em_email = $match[1].$match[2];
