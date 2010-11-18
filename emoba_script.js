@@ -1,8 +1,10 @@
+/** Version 1.6 **/
 function emobascript(email, ename, id, hover) {
 	var cleanName = ename.replace(/&lt;/g, '<');
   var mailtoString = 'mailto:';
   var mailNode = document.getElementById(id);
   var linkNode = document.createElement('a');
+  linkNode.className = 'emoba-link';
   linkNode.title = 'Send email';
   linkNode.id = id;
   var mailtolink = mailtoString + email;
@@ -15,6 +17,7 @@ function emobascript(email, ename, id, hover) {
 		linkNode.className = 'emoba-pop';
 	}
   var tNode = document.createElement('span');
+  tNode.className = 'emoba-realname';
   tNode.innerHTML = cleanName;
   linkNode.appendChild(tNode);
   mailNode.parentNode.replaceChild(linkNode, mailNode);

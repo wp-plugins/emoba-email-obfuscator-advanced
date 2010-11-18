@@ -1,31 +1,32 @@
-=== emObA ===
+=== emObA - Email Obfuscator Advanced ===
 Author: Kim Kirkpatrick
 Contributors:  kirkpatrick
 Donate link: http://kirknet.org/wpplugins/
 Tags: spam, email, mail, address, addresses, hide, JavaScript
 Requires at least: 2.8
-Tested up to: 2.9.2
-Stable tag: 1.5.1
-Version: 1.5.1
+Tested up to: 3.0.1
+Stable tag: 1.6
+Version: 1.6
 
 == Description ==
 
-emObA - Email Obfuscator Advanced - effectively and automatically makes it very difficult for spambots to harvest email addresses from your WordPress-powered blog. Email addresses may be placed in posts, comments, and pages, plain, as html links, or in a special "easy email" form, and they are automatically protected by emObA. All email addresses appearing on your blog will appear on the screen (if JavaScript is enabled) as active links to normal, valid, and correct email addresses (the actual email appears in the status bar when hovering), but to spambots they will have no recognizable features.  
-
+emObA - Email Obfuscator Advanced - effectively and automatically makes it difficult for spambots to harvest email addresses from your WordPress-powered blog. Email addresses may be placed in posts, comments, and pages, as html links, in a special "easy email" form, or just email, and they will be protected by emObA automatically. All email addresses appearing on your blog will appear on the screen (if JavaScript is enabled) as active links to normal, valid, and correct email addresses (the actual email appears as usual in the status bar when hovering), but to spambots they will have no recognizable features. 
 
 It recognizes, and produces obfuscated active (click-to-send) email links for, 
 
- * standard email links (`<a href="mailto:you@example.com">Name</a>`), allowing (but ignoring) additional attributes both before and after the href attribute, and allowing a subject using the syntax `mailto:you@example.com?subject=...`.  
+ * standard email links (`<a href="mailto:you@example.com">Real Name</a>`), allowing (but ignoring) additional attributes both before and after the href attribute, and allowing an email Subject using the syntax `mailto:you@example.com?subject=...`.  
 
- * the special "easy to write" form  `[EMAIL Name | you@example.com]`, also allowing the `?subject=... ]` syntax.  (Earlier versions' much more fragile `[Name] you@example.com` remains available if the LEGACY flag is true.)  
+ * the special "easy to write" form  `[EMAIL Real Name | you@example.com]`, also allowing the `?subject=... ]` syntax.  (Earlier versions' much more fragile `[Real Name] you@example.com` remains available if the LEGACY flag is set true.)  
 
- * a bare email address `you@example.com` (with or without "mailto:" in front of it; `?subject=` syntax not allowed here)  
+ * a bare email address `you@example.com`, with or without "mailto:" in front of it. (`?subject=` syntax not allowed here.)
 
-These will all appear as active email links displaying "Name". In the cases of a bare email link (one which has no Name) or a link in which the Name is the email itself, the link will show as the email displayed in human-readable form, eg `you [@] example [.] com`, where the [@] and [.] are  text symbols or graphic images to hide them from spambots. 
+These will all appear as active email links displaying "Real Name". In the cases of a bare email link (one which has no Real Name) or a link in which the Real Name is the email itself, the link will show as the email displayed in human-readable form, eg `you [@] example [.] com`, where the [@] and [.] are either text symbols or graphic images (depending on the value of the  GLYPHS flag), hiding the email addresses from spambots. 
  
-This is accomplished with a combination of WordPress filter hooks and JavaScript. (If JavaScript is not enabled, the link will not be active.)
+This is accomplished with a combination of WordPress filter hooks and JavaScript. (If JavaScript is not enabled, the link will not be active, and the email will appear in the obfuscated but human-readable form.)
 
 The email addresses occur in the HTML source only in a well-hidden encoding.  The email address is converted to hexadecimal and appears only as the value of a JavaScript variable.  That encoded email is separated in the JavaScript from the telltale `mailto:` to further confuse spambots. 
+
+I've designed this plug-in with "real name" emails in mind -- `<a href="mailto:you@example.com">Real Name</a>` or `[EMAIL Real Name | you@example.com]`, which display as `Real Name`.  This will follow whatever syling you apply to your text and to links.  However, if you primarily obfuscate lists of email addresses themselves -- `you@example.com` -- you may not be satisfied with the appearance.  They will appear with either glyphs or specified text symbols in place of `@` and `.`.  The color and weights of the glyphs are fixed (though they do change size with surrounding text), and they don't look exactly like the font symbols they replace. And if text symbols are used, they certainly don't look exactly like `@` and `.`.  At present, I have no ideas how, nor much intention, to improve this.
 
 
 == Installation ==
@@ -38,13 +39,15 @@ The email addresses occur in the HTML source only in a well-hidden encoding.  Th
 
 
 == Upgrade notice ==
-1.5.1 is a bug fix.
+1.6 Fixed css to work with WP3.0 default theme. Added classes to enable styling of link.
+
 emoBA 1.3+ requires WP 2.8+.  
 (If needed for WP2.3+, you may hard-code appropriate paths around lines 31,32 of emoba.php.)
 
 
 == Changelog ==
-
+= 1.6 =
+2010/11/18 fixed css for WP3.0 default theme.  Bug fix: ordinary links and email links in same line broken (thanks, NickStrong, for pointing this out) Added class emoba-link to the anchor, and class emoba-realname to the span surrounding the link's visible text (thanks for suggestion, sassymonkey). Improved display of glyphed addresses -- prettier, scale with text (thanks, capnhairdo). 
 = 1.5.1 =
 2010/04/01 Bug fix. An editing slip in 1.5 broke ordinary links and [EMAIL | ].  Apologies.
 = 1.5 =
