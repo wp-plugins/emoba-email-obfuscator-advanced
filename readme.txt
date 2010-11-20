@@ -6,7 +6,7 @@ Tags: spam, email, mail, address, addresses, hide, JavaScript
 Requires at least: 2.8
 Tested up to: 3.0.1
 Stable tag: 1.6
-Version: 1.6
+Version: 1.6.1
 
 == Description ==
 
@@ -46,6 +46,8 @@ emoBA 1.3+ requires WP 2.8+.
 
 
 == Changelog ==
+= 1.6.1 =
+extra attributes in link broke parse; now they are swallowed harmlessly.  To do: scan for class= and style= and plug them back into obfuscated link
 = 1.6 =
 2010/11/18 fixed css for WP3.0 default theme.  Bug fix: ordinary links and email links in same line broken (thanks, NickStrong, for pointing this out) Added class emoba-link to the anchor, and class emoba-realname to the span surrounding the link's visible text (thanks for suggestion, sassymonkey). Improved display of glyphed addresses -- prettier, scale with text (thanks, capnhairdo). 
 = 1.5.1 =
