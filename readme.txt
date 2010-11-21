@@ -1,4 +1,4 @@
-=== emObA - Email Obfuscator Advanced ===
+=== emObA ===
 Author: Kim Kirkpatrick
 Contributors:  kirkpatrick
 Donate link: http://kirknet.org/wpplugins/
@@ -6,7 +6,7 @@ Tags: spam, email, mail, address, addresses, hide, JavaScript
 Requires at least: 2.8
 Tested up to: 3.0.1
 Stable tag: 1.6
-Version: 1.6.1
+ - Email Obfuscator Advanced  (Now handles class and style attributes in email link)
 
 == Description ==
 
@@ -14,7 +14,7 @@ emObA - Email Obfuscator Advanced - effectively and automatically makes it diffi
 
 It recognizes, and produces obfuscated active (click-to-send) email links for, 
 
- * standard email links (`<a href="mailto:you@example.com">Real Name</a>`), allowing (but ignoring) additional attributes both before and after the href attribute, and allowing an email Subject using the syntax `mailto:you@example.com?subject=...`.  
+ * standard email links (`<a href="mailto:you@example.com">Real Name</a>`), allowing class and style attributes (but ignoring other attributes), and allowing an email Subject using the syntax `mailto:you@example.com?subject=...`.  
 
  * the special "easy to write" form  `[EMAIL Real Name | you@example.com]`, also allowing the `?subject=... ]` syntax.  (Earlier versions' much more fragile `[Real Name] you@example.com` remains available if the LEGACY flag is set true.)  
 
@@ -26,7 +26,7 @@ This is accomplished with a combination of WordPress filter hooks and JavaScript
 
 The email addresses occur in the HTML source only in a well-hidden encoding.  The email address is converted to hexadecimal and appears only as the value of a JavaScript variable.  That encoded email is separated in the JavaScript from the telltale `mailto:` to further confuse spambots. 
 
-I've designed this plug-in with "real name" emails in mind -- `<a href="mailto:you@example.com">Real Name</a>` or `[EMAIL Real Name | you@example.com]`, which display as `Real Name`.  This will follow whatever syling you apply to your text and to links.  However, if you primarily obfuscate lists of email addresses themselves -- `you@example.com` -- you may not be satisfied with the appearance.  They will appear with either glyphs or specified text symbols in place of `@` and `.`.  The color and weights of the glyphs are fixed (though they do change size with surrounding text), and they don't look exactly like the font symbols they replace. And if text symbols are used, they certainly don't look exactly like `@` and `.`.  At present, I have no ideas how, nor much intention, to improve this.
+I've designed this plug-in with "real name" emails in mind -- `<a href="mailto:you@example.com">Real Name</a>` or `[EMAIL Real Name | you@example.com]`, which display as `Real Name`.  This will follow whatever styling you apply to your text and to links.  However, if you primarily obfuscate lists of bare email addresses -- `you@example.com` -- you may not be satisfied with the appearance.  They will appear with either glyphs or specified text symbols in place of `@` and `.`.  The color and weights of the glyphs are fixed (though they do change size with surrounding text), and they don't look exactly like the font symbols they replace. And if text symbols are used, they certainly don't look exactly like `@` and `.`.  
 
 
 == Installation ==
@@ -39,15 +39,22 @@ I've designed this plug-in with "real name" emails in mind -- `<a href="mailto:y
 
 
 == Upgrade notice ==
-1.6 Fixed css to work with WP3.0 default theme. Added classes to enable styling of link.
 
-emoBA 1.3+ requires WP 2.8+.  
+= 1.6.5 =
+Now handles preexisting class and style attributes in email link.
+
+= 1.6 = 
+Fixed css to work with WP3.0 default theme. Added classes to enable styling of link.
+
+= 1.3+ =
+requires WP 2.8+.  
 (If needed for WP2.3+, you may hard-code appropriate paths around lines 31,32 of emoba.php.)
 
 
 == Changelog ==
-= 1.6.1 =
-extra attributes in link broke parse; now they are swallowed harmlessly.  To do: scan for class= and style= and plug them back into obfuscated link
+
+= 1.6.5 =
+2010/11/20 Extra attributes in link broke parse in 1.6; now class and style are carried through, any others are swallowed harmlessly.  
 = 1.6 =
 2010/11/18 fixed css for WP3.0 default theme.  Bug fix: ordinary links and email links in same line broken (thanks, NickStrong, for pointing this out) Added class emoba-link to the anchor, and class emoba-realname to the span surrounding the link's visible text (thanks for suggestion, sassymonkey). Improved display of glyphed addresses -- prettier, scale with text (thanks, capnhairdo). 
 = 1.5.1 =
