@@ -2,7 +2,7 @@
 /*
 Plugin Name: emObA
 Description: emObA (email Obfuscator Advanced) -- Scans pages, posts, comments for email addresses and creates mailto links which are difficult for 'bot harvesters to find. Typing A@B.C results in a "A@B.C" link, with grahic representations of "@"and "."; html anchor links with href="mailto:" are obfuscated; the special occurrence "[EMAIL Name | A@B.C]"  is recognized and results in an obfuscated link on "Name".  Without JavaScript, hovering pops up the email with graphic glyphs for "@" and ".".  (Based on eMob Email Obfuscator 1.1 by Billy Halsey.)
-Version: 1.5.1
+Version: 1.6.5
 License: GPL
 Author: Kim Kirkpatrick
 Author URI: http://kirknet/wpplugins
@@ -45,7 +45,7 @@ define ("CLICKPOP", false);
 /****
 If GLYPHS is true, glyphs will be used, text otherwise, for replacing @ and . in displayed emails.
 ****/
-define("GLYPHS", true);
+define("GLYPHS", false);
 
 /****
 If BARE_TO_LINK is true, bare emails (a@b.c) will be converted to a link.  If false, the email will appear in the glyph form, but there will be no link.
@@ -67,7 +67,7 @@ if (true == GLYPHS) {
 	define('DOT_SYMBOL', '<img src="'.plugin_dir_url(__FILE__).'dot-glyph.gif" alt="dot" class="emoba-glyph" />' );
 }else{
 	define('AT_SYMBOL', '&copy;');
-	define('DOT_SYMBOL', ',');
+	define('DOT_SYMBOL', '&bull;');
 }
 
 /********* /CONFIGURATION *********/
@@ -124,10 +124,10 @@ function emoba_hexify_mailto($mailto) {
 /****
 The JavaScript for creating the email link and popup
 ****/
-function emoba_addJScript($email, $ename, $id) {
+function emoba_addJScript($email, $ename, $id, $estyle=null, $eclass=null) {
   $link   = emoba_hexify_mailto($email);
   $clean_name = str_replace("<", "&lt;", $ename);
-  $emoba_js = "<script type=\"text/javascript\">emobascript('".$link."','".$clean_name."','".$id."',".((true==CLICKPOP)?1:0).");</script>";
+  $emoba_js = "<script type=\"text/javascript\">emobascript('".$link."','".$clean_name."','".$id."','".$estyle."','".$eclass."',".((true==CLICKPOP)?1:0).");</script>";
 	return $emoba_js;
 }
 
@@ -146,18 +146,21 @@ The main function.
 
 function emoba_replace($content) {
 
-// (1) convert full email link <a xxx href="mailto:A@B.C?subject=sss" yyy>Name</a>
+// (1) convert full email link <a  href="mailto:A@B.C?subject=sss" >Name</a>
 
   $content = preg_replace_callback(
-    '!<a(?:.*)href="mailto:' .EMAIL. '([?][^"]*)?"[^>]*>(.+)</a>!i',
+    '!<a([^>]*)href="mailto:' .EMAIL. '([?][^"]*)?"([^>]*)>([^<]*)</a>!i',
     create_function(
       '$match',
-      '$em_email = $match[1].$match[2];
-			$em_name = emoba_symb_email($match[3]);
+      '$other_atts = $match[1].$match[4];
+      $em_class = (preg_match(\'!class="([^"]*)"!i\',$other_atts,$match_class)==0)?null:$match_class[1]." ";
+      $em_style = (preg_match(\'!style=\"([^"]*)\"!i\',$other_atts,$match_style)==0)?null:$match_style[1];
+      $em_email = $match[2].$match[3];
+			$em_name = emoba_symb_email($match[5]);
 			$id = "emoba-" . rand(1000, 9999);
 			$repaddr = "<span id=\"$id\">";
 			$repaddr .= emoba_readable_email($em_email, $em_name) . "</span>\n";
-			$repaddr .= emoba_addJScript($em_email, $em_name, $id);
+			$repaddr .= emoba_addJScript($em_email, $em_name, $id, $em_class, $em_style);
 			return $repaddr;' ),
     $content );
 
