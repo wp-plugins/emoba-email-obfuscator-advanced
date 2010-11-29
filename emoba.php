@@ -2,7 +2,7 @@
 /*
 Plugin Name: emObA
 Description: emObA (email Obfuscator Advanced) -- Scans pages, posts, comments for email addresses and creates mailto links which are difficult for 'bot harvesters to find. Typing A@B.C results in a "A@B.C" link, with grahic representations of "@"and "."; html anchor links with href="mailto:" are obfuscated; the special occurrence "[EMAIL Name | A@B.C]"  is recognized and results in an obfuscated link on "Name".  Without JavaScript, hovering pops up the email with graphic glyphs for "@" and ".".  (Based on eMob Email Obfuscator 1.1 by Billy Halsey.)
-Version: 1.6.5
+Version: 1.6.5+
 License: GPL
 Author: Kim Kirkpatrick
 Author URI: http://kirknet/wpplugins
@@ -98,12 +98,6 @@ function emoba_readable_email($email="", $name="(Hover)" ) {
 
 
 /****
-This is the RE expression for detecting email addresses.
-****/
-define( "EMAIL", "([A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4})" );
-
-
-/****
 This converts the email's string of character ordinals to %-hex representation
 It splits off any ?subject=yyy, replaces spaces by %20, and tacks it back onto the
 encoded email.
@@ -133,6 +127,16 @@ function emoba_addJScript($email, $ename, $id, $estyle=null, $eclass=null) {
 
 
 /****
+This is the RE expression for detecting email addresses.
+****/
+//define( "EMAILADDR", "([A-Za-z0-9.#$%&'!*+/=?^_{|}~-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,6})" ); // removed `
+define( "EMAILADDR", "([^,;<>\@\][\001-\040]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,6})" ); // allows \t,\n, etc
+//define( "EMAILADDR", "([^,;<>\@\][\001-\040]+@(?:(?:[A-Za-z0-9-])+\.)+[A-Za-z]{2,6})" ); // allows \t,\n, etc
+//define( "EMAILADDR", "([^,\.;<>\@\][\001-\040]+(?:\.[^,\.;<>\@\][\001-\040]+)*@(?:(?:[A-Za-z0-9-])+\.)+[A-Za-z]{2,6})" ); // allows \t,\n, etc
+//define( "EMAILADDR", "([^\054\073\074\076@\133-\135\001-\040]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,6})" );// strange bug
+
+
+/****
 The main function.
 1. Detect and process emails, in this order:
   a. as a link <a href="mailto:A@B.C">Name</a>
@@ -149,7 +153,7 @@ function emoba_replace($content) {
 // (1) convert full email link <a  href="mailto:A@B.C?subject=sss" >Name</a>
 
   $content = preg_replace_callback(
-    '!<a([^>]*)href="mailto:' .EMAIL. '([?][^"]*)?"([^>]*)>([^<]*)</a>!i',
+    '`<a([^>]*)href="mailto:' .EMAILADDR. '([?][^"]*)?"([^>]*)>([^<]*)</a>`i',
     create_function(
       '$match',
       '$other_atts = $match[1].$match[4];
@@ -168,13 +172,13 @@ function emoba_replace($content) {
 //  (1a) We can now remove mailto:'s from any remaining  mailto:A@B.C
 //  (This won't affect the full links just processed, since they no longer contain the string mailto:A@B.C)
 
-  $content = preg_replace("!mailto:".EMAIL."!i", '$1', $content);
+  $content = preg_replace("`mailto:".EMAILADDR."`i", '$1', $content);
 
 
 // (2) Convert the special pattern [EMAIL Name | A@B.C] to email link <a href="mailto:A@B.C >Name</a>
 //     Allows any number of spaces at each position within [EMAIL|]
   $content = preg_replace_callback(
-    '!\[EMAIL(?:[\s]|&nbsp;)*([^|]+)(?:(?:[\s]|&nbsp;)*[|](?:[\s]|&nbsp;)*)'.EMAIL.'([?][^]]*?)?(?:[ ]|&nbsp;)*]!',
+    '`\[EMAIL(?:[\s]|&nbsp;)*([^|]+)(?:(?:[\s]|&nbsp;)*[|](?:[\s]|&nbsp;)*)'.EMAILADDR.'([?][^]]*?)?(?:[ ]|&nbsp;)*]`',
     create_function(
       '$match',
 			'$em_email = $match[2].$match[3];
@@ -191,7 +195,7 @@ if ( true == LEGACY ) {
 // (2') (Legacy) Convert the special pattern [Name] A@B.C to email link <a href="mailto:A@B.C >Name</a>
 
   $content = preg_replace_callback(
-    '!\[([^]]+)\](?:[\s]|&nbsp;)*'.EMAIL.'!',
+    '`\[([^]]+)\](?:[\s]|&nbsp;)*'.EMAILADDR.'`',
     create_function(
       '$match',
 			'$em_email = $match[2];
@@ -211,7 +215,7 @@ if ( true == BARE_TO_LINK ) {
 // (3) Convert bare email addresses A@B.C to the link <a href="mailto:A@B.C">A B C</a>
 
   $content = preg_replace_callback(
-    '!'.EMAIL.'!',
+    '`'.EMAILADDR.'`',
     create_function(
       '$match',
 			'$em_email = $match[1];
@@ -227,7 +231,7 @@ if ( true == BARE_TO_LINK ) {
 
 // (3) Convert any remaining addresses A@B.C
   $content = preg_replace_callback(
-    '!'.EMAIL.'!',
+    '`'.EMAILADDR.'`',
     create_function(
       '$match',
 			'$em_email = $match[1];

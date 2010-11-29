@@ -6,7 +6,8 @@ Tags: spam, email, mail, address, addresses, hide, JavaScript
 Requires at least: 2.8
 Tested up to: 3.0.1
 Stable tag: 1.6.5
-(Now handles class and style attributes in email link)
+Version 1.6.5+ 
+
 
 == Description ==
 
@@ -22,9 +23,11 @@ It recognizes, and produces obfuscated active (click-to-send) email links for,
 
 These will all appear as active email links displaying "Real Name". In the cases of a bare email link (one which has no Real Name) or a link in which the Real Name is the email itself, the link will show as the email displayed in human-readable form, eg `you [@] example [.] com`, where the [@] and [.] are either text symbols or graphic images (depending on the value of the  GLYPHS flag), hiding the email addresses from spambots. 
  
-This is accomplished with a combination of WordPress filter hooks and JavaScript. (If JavaScript is not enabled, the link will not be active, and the email will appear in the obfuscated but human-readable form.)
+If JavaScript is not enabled, the email will appear in obfuscated but human-readable form but the link will not be active.
 
 The email addresses occur in the HTML source only in a well-hidden encoding.  The email address is converted to hexadecimal and appears only as the value of a JavaScript variable.  That encoded email is separated in the JavaScript from the telltale `mailto:` to further confuse spambots. 
+
+I believe any legitimate email will be recognized.  However, no attempt at validation is made -- certain illegally formed addresses will also be recognized, for example, ones containing two successive .'s. (Note: Legal characters before the @ are !#$%&'*+/=?^_{|}~- and `.)
 
 I've designed this plug-in with "real name" emails in mind -- `<a href="mailto:you@example.com">Real Name</a>` or `[EMAIL Real Name | you@example.com]`, which display as `Real Name`.  This will follow whatever styling you apply to your text and to links.  However, if you primarily obfuscate lists of bare email addresses -- `you@example.com` -- you may not be satisfied with the appearance.  They will appear with either glyphs or specified text symbols in place of `@` and `.`.  The color and weights of the glyphs are fixed (though they do change size with surrounding text), and they don't look exactly like the font symbols they replace. And if text symbols are used, they certainly don't look exactly like `@` and `.`.  
 
@@ -40,6 +43,9 @@ I've designed this plug-in with "real name" emails in mind -- `<a href="mailto:y
 
 == Upgrade notice ==
 
+= 1.6.6 =
+Small fixes
+
 = 1.6.5 =
 Now handles preexisting class and style attributes in email link.
 
@@ -52,6 +58,9 @@ requires WP 2.8+.
 
 
 == Changelog ==
+
+= 1.6.6 =
+2010/11/28 Slight changes in regex -- allow longer (up to 6) top-domain name; simplify handling of case.
 
 = 1.6.5 =
 2010/11/20 Extra attributes in link broke parse in 1.6; now class and style are carried through, any others are swallowed harmlessly.  
