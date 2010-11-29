@@ -2,7 +2,7 @@
 /*
 Plugin Name: emObA
 Description: emObA (email Obfuscator Advanced) -- Scans pages, posts, comments for email addresses and creates mailto links which are difficult for 'bot harvesters to find. Typing A@B.C results in a "A@B.C" link, with grahic representations of "@"and "."; html anchor links with href="mailto:" are obfuscated; the special occurrence "[EMAIL Name | A@B.C]"  is recognized and results in an obfuscated link on "Name".  Without JavaScript, hovering pops up the email with graphic glyphs for "@" and ".".  (Based on eMob Email Obfuscator 1.1 by Billy Halsey.)
-Version: 1.6.5+
+Version: 1.6.6
 License: GPL
 Author: Kim Kirkpatrick
 Author URI: http://kirknet/wpplugins
@@ -129,11 +129,14 @@ function emoba_addJScript($email, $ename, $id, $estyle=null, $eclass=null) {
 /****
 This is the RE expression for detecting email addresses.
 ****/
-//define( "EMAILADDR", "([A-Za-z0-9.#$%&'!*+/=?^_{|}~-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,6})" ); // removed `
-define( "EMAILADDR", "([^,;<>\@\][\001-\040]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,6})" ); // allows \t,\n, etc
-//define( "EMAILADDR", "([^,;<>\@\][\001-\040]+@(?:(?:[A-Za-z0-9-])+\.)+[A-Za-z]{2,6})" ); // allows \t,\n, etc
-//define( "EMAILADDR", "([^,\.;<>\@\][\001-\040]+(?:\.[^,\.;<>\@\][\001-\040]+)*@(?:(?:[A-Za-z0-9-])+\.)+[A-Za-z]{2,6})" ); // allows \t,\n, etc
-//define( "EMAILADDR", "([^\054\073\074\076@\133-\135\001-\040]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,6})" );// strange bug
+
+//define( "EMAILADDR", "([A-Za-z0-9.#$%&'!*+/=?^_{|}~-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,6})" ); // disallows backtick `
+
+	define("ECHARS","[^,;<>\@\][\001-\040\200-\377]");
+	define( "EMAILADDR", "(".ECHARS."+@[A-Za-z0-9.-]+\.[A-Za-z]{2,6})" ); // allows \t,\n, etc and two successive .'s
+
+//	define("ECHARS1","[^,;<>\@\]\.[\001-\040\200-\377]");
+//	define( "EMAILADDR", "(".ECHARS1."+(?:\.".ECHARS1."+)*@(?:[A-Za-z0-9-]+\.)+[A-Za-z]{2,6})" ); // allows \t,\n, etc
 
 
 /****
