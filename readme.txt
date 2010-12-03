@@ -6,22 +6,22 @@ Tags: spam, email, mail, address, addresses, hide, JavaScript
 Requires at least: 2.8
 Tested up to: 3.0.1
 Stable tag: 1.6.5
-Version 1.6.5+ 
+Version 2.0
 
 
 == Description ==
 
-emObA - Email Obfuscator Advanced - effectively and automatically makes it difficult for spambots to harvest email addresses from your WordPress-powered blog. Email addresses may be placed in posts, comments, and pages, as html links, in a special "easy email" form, or just email, and they will be protected by emObA automatically. All email addresses appearing on your blog will appear on the screen (if JavaScript is enabled) as active links to normal, valid, and correct email addresses (the actual email appears as usual in the status bar when hovering), but to spambots they will have no recognizable features. 
+emObA - Email Obfuscator Advanced - effectively and automatically makes it difficult for spambots to harvest email addresses from your WordPress-powered blog. Email addresses may be placed in posts, comments, and pages, as html links, in a special "easy email" form, or  as the address itself, and they will be protected by emObA automatically. All email addresses appearing on your blog will appear on the screen (if JavaScript is enabled) as active links to normal, valid, and correct email addresses, but to spambots they will have no recognizable features.  (As usual, the actual email appears in the status bar when hovering.) 
 
-It recognizes, and produces obfuscated active (click-to-send) email links for, 
+emObA recognizes, and produces obfuscated active (click-to-send) email links for, 
 
  * standard email links (`<a href="mailto:you@example.com">Real Name</a>`), allowing class and style attributes (but ignoring other attributes), and allowing an email Subject using the syntax `mailto:you@example.com?subject=...`.  
 
- * the special "easy to write" form  `[EMAIL Real Name | you@example.com]`, also allowing the `?subject=... ]` syntax.  (Earlier versions' much more fragile `[Real Name] you@example.com` remains available if the LEGACY flag is set true.)  
+ * the special "easy to write" form  `[EMAIL Real Name | you@example.com]`, also allowing the `?subject=... ]` syntax.  (Earlier versions' much more fragile `[Real Name] you@example.com` remains available if LEGACY is chosen.)  
 
  * a bare email address `you@example.com`, with or without "mailto:" in front of it. (`?subject=` syntax not allowed here.)
 
-These will all appear as active email links displaying "Real Name". In the cases of a bare email link (one which has no Real Name) or a link in which the Real Name is the email itself, the link will show as the email displayed in human-readable form, eg `you [@] example [.] com`, where the [@] and [.] are either text symbols or graphic images (depending on the value of the  GLYPHS flag), hiding the email addresses from spambots. 
+These will all appear as active email links displaying "Real Name". In the cases of a bare email link (one which has no Real Name) or a link in which the Real Name is the email itself, the link will show as the email displayed in human-readable form, eg `you [@] example [.] com`, where the [@] and [.] are either text symbols or graphic images (as set in administration), hiding the email addresses from spambots. 
  
 If JavaScript is not enabled, the email will appear in obfuscated but human-readable form but the link will not be active.
 
@@ -43,8 +43,8 @@ I've designed this plug-in with "real name" emails in mind -- `<a href="mailto:y
 
 == Upgrade notice ==
 
-= 1.6.6 =
-Small fixes
+= 2.0 =
+Now has administration page for setting parameters.
 
 = 1.6.5 =
 Now handles preexisting class and style attributes in email link.
@@ -59,8 +59,8 @@ requires WP 2.8+.
 
 == Changelog ==
 
-= 1.6.6 =
-2010/11/28 Slight changes in regex -- allow longer (up to 6) top-domain name; simplify handling of case.
+= 2.0 =
+2010/12/04 Administration page added.  Slight changes in regex -- allow longer (up to 6) top-domain name; simplify handling of case.
 
 = 1.6.5 =
 2010/11/20 Extra attributes in link broke parse in 1.6; now class and style are carried through, any others are swallowed harmlessly.  

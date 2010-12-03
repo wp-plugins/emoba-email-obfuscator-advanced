@@ -1,5 +1,5 @@
 /********************************
-+ Email Obfuscator Popups v 1.6
++ Email Obfuscator Popups v 2.0
 *********************************/
 /** DO NOT EDIT BELOW **/
 .emoba-pop span.emoba-hover {
@@ -30,4 +30,23 @@ span.emoba-em {
 a.emoba-link {
 }
 span.emoba-realname {
+}
+
+/******** ADMIN PAGE STYLES ************/
+.form-table {
+	margin-left:2em;
+}
+.form-table td>input {
+	width:4em;
+}
+.form-table td {
+	font-size:12px;
+}
+.form-table th {
+	font-size:14px;
+}
+ul {
+	list-style-type:circle;
+	list-style-position:inside;
+	margin-left:2em;
 }
