@@ -91,26 +91,26 @@ This is a major modification of Email Obfuscator by Billy Halsey. That plugin se
 
 1. The name?  obfuscate = obscurate = obnubilate < obliterate
 
-1. What does the constant `GLYPHS` (defined at line 48 of emoba.php; default=true) do?
+1. What does the option `glyphs` do?
 
-  When `GLYPHS` is defined true, visible representations of the email address will have graphical elements in place of `@` and `.`; when false, copyright symbol and comma will appear.
+  When `glyphs` is checked, visible representations of the email address will have graphical elements in place of `@` and `.`; when false, copyright symbol and comma will appear.
   
-1. What does the constant `CLICKPOP` (defined at line 43 of emoba.php; default=false) do?
+1. What does the option `clickpop` do?
 
-  When `CLICKPOP` is defined true, hovering over "Name" changes the link to "Click to email Name".
+  When `clickpop` is checked, hovering over "Name" changes the link to "Click to email Name".
 
-1. What does the constant `BARE_TO_LINK` (defined at line 53 of emoba.php; default=true) do?
+1. What does the option `bare has link` do?
 
-  When `BARE_TO_LINK` is defined true, a bare email (`A@B.C`) will appear as a link; if false, it will appear as a glyphed address, but will not be an active link.
+  When `bare has link` is checked, a bare email (`A@B.C`) will appear as a link; unchecked, it will appear as a glyphed address, but will not be an active link.
   
-1. What does the constant `LEGACY` (defined at line 59 of emoba.php; default=false) do?
+1. What does the option `legacy` (default: unchecked) do?
 
-  If LEGACY is true, the old "simple" form `[Name] A@B.C` will be converted to an email link. This can be turned off to avoid problems with WordPress shortcuts, in which case the email will be treated as bare, preceded by [Name].  
-  Regardless of the value of LEGACY, the new form `[EMAIL Name | A@B.C]` will be converted.
+  If 'legacy` is true, the old "simple" form `[Name] A@B.C` will be converted to an email link. This can be turned off to avoid problems with WordPress shortcuts, in which case the email will be treated as bare, preceded by [Name].  
+  Regardless of the setting of `legacy`, the new form `[EMAIL Name | A@B.C]` will be converted.
 
-1. I don't like the copyright and comma you use in the textified emails!
+1. I don't like the copyright symbol and centered dot you use in the textified emails!
 
-  These can be edited to whatever text you want at lines 69 and 70 of emoba.php. (Just be careful not to lose the quotes.)  
+  These can be set to whatever text you want. You may use any characters including html entities.
 
 1. What about styling and appearance?
 
