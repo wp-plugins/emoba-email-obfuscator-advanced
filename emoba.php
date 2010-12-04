@@ -98,60 +98,75 @@ if ( is_admin() ) {
 
 	// Draw the menu page itself
 	function emoba_do_menu() {
-		?>
-		<div class="wrap">
-			<h2>emObA, Email Obfuscator</h2>
+?>
 
-			<p>	<b>emObA</b> effectively and automatically makes it difficult for spambots to harvest email addresses from your Wordpress-powered blog. Email addresses may be placed in posts, comments, and pages, as html links, in a special &ldquo;easy email&rdquo; form, or as the address itself, and they will be protected by emObA automatically. All email addresses appearing on your blog will appear on the screen (if JavaScript is enabled) as active links to normal, valid, and correct email addresses, but to spambots they will have no recognizable features.  (As usual, the actual email appears in the status bar when hovering.)</p>
-			<p>The email addresses occur in the HTML source only in a well-hidden encoding.  The email address is converted to hexadecimal and appears only as the value of a JavaScript variable.  That encoded email is separated in the JavaScript from the telltale <code>mailto:</code> to further confuse spambots.</p>
-			<p>emObA recognizes, and produces obfuscated active (click-to-send) email links for</p>
-			<ul>
-				<li>standard email links (<code>&lt;a href="mailto:you@example.com"&gt;Real Name&lt;/a&gt;</code>), allowing class and style attributes (but ignoring other attributes), and allowing an email Subject using the syntax <code>mailto:you@example.com?subject=...</code>.</li>
-				<li>the special "easy to write" form  <code>[EMAIL Real Name | you@example.com]</code>, also allowing the <code>?subject=... ]</code> syntax.  (Earlier versions' much more fragile <code>[Real Name] you@example.com</code> remains available if LEGACY is chosen.)</li>
-				<li>a bare email address <code>you@example.com</code>, with or without "mailto:" in front of it. (<code>?subject=</code> syntax not allowed here.)</li>
-			</ul>
-			<p>These will all appear as active email links displaying "Real Name". In the cases of a bare email link (one which has no Real Name) or a link in which the Real Name is the email itself, the link will show as the email displayed in human-readable form, eg <code>you [@] example [.] com</code>, where the [@] and [.] are either text symbols or graphic images (as set in administration), hiding the email addresses from spambots.</p>
-			<p>If JavaScript is not enabled, the email will appear in obfuscated but human-readable form but the link will not be active.</p>
-			<p>I believe any legitimate email will be recognized.  However, no attempt at validation is made -- certain illegally formed addresses will also be recognized, for example, ones containing two successive .'s. (Note: Legal characters before the @ are <code>!#$%&amp;'*+/=?^_{|}~- and `</code>.)</p>
-			<p>I've designed this plug-in with "real name" emails in mind -- <code>&lt;a href="mailto:you@example.com"&gt;Real Name&lt;/a&gt;</code> or <code>[EMAIL Real Name | you@example.com]</code>, which display as <code>Real Name</code>.  This will follow whatever styling you apply to your text and to links.  However, if you primarily obfuscate lists of bare email addresses -- <code>you@example.com</code> -- you may not be satisfied with the appearance.  They will appear with either glyphs or specified text symbols in place of @ and . .  The color and weights of the glyphs are fixed (though they do change size with surrounding text), and they don't look exactly like the font symbols they replace. And if text symbols are used, they certainly don't look exactly like @ and ..</p>
+		<div class="wrap">
+			<h2>emObA &ndash; Email Obfuscator Advanced</h2>
 
 			<form method="post" action="options.php">
 				<?php settings_fields('emoba_options'); ?>
 				<?php $options = get_option('emoba'); ?>
 				<h3> Options</h3>
-				<table class="form-table">
+				<table class="emoba-form-table">
 					<tr valign="top">
 						<th scope="row">ClickPop</th>
 						<td><input name="emoba[clickpop]" type="checkbox" value="1" <?php checked('1', $options['clickpop']); ?> /></td>
-						<td style="width:100%;">If checked, hovering over the link "addr" changes it to "Click to email addr".</td>
+						<td style="width:80%;">If checked, hovering over the link "addr" changes it to "Click to email addr".</td>
 					</tr>
 					<tr valign="top"><th scope="row">Glyphs</th>
 						<td><input name="emoba[glyphs]" type="checkbox" value="1" <?php checked('1', $options['glyphs']); ?> /></td>
-						<td style="width:100%;">If checked, glyphs will be used, text otherwise, for replacing @ and . in displayed emails.</td>
+						<td style="width:80%;">If checked, glyphs will be used, text otherwise, for replacing @ and . in displayed emails.</td>
 					</tr>
 					<tr valign="top"><th scope="row">Bare with link</th>
 						<td><input name="emoba[baretolink]" type="checkbox" value="1" <?php checked('1', $options['baretolink']); ?> /></td>
-						<td style="width:100%;">If checked, bare emails (a@b.c) will be an email link.  If false, the email will appear in the glyph form, but there will be no link.</td>
+						<td style="width:80%;">If checked, bare emails (a@b.c) will be an email link.  If false, the email will appear in the glyph form, but there will be no link.</td>
 					</tr>
 					<tr valign="top"><th scope="row">Legacy mode</th>
 						<td><input name="emoba[legacy]" type="checkbox" value="1" <?php checked('1', $options['legacy']); ?> /></td>
-						<td style="width:100%;">If legacy is true, the old "simple" form `[Name] A@B.C` will be converted to an email link. This can be turned off to avoid problems with WordPress shortcuts, in which case the email will be treated as bare, preceded by [Name]. Regardless of the value of legacy, the new form `[EMAIL Name | A@B.C]` will be properly converted</td>
+						<td style="width:80%;">If legacy is true, the old "simple" form `[Name] A@B.C` will be converted to an email link. This can be turned off to avoid problems with WordPress shortcuts, in which case the email will be treated as bare, preceded by [Name]. Regardless of the value of legacy, the new form `[EMAIL Name | A@B.C]` will be properly converted</td>
 					</tr>
 					<tr valign="top"><th scope="row">At-Char</th>
 						<td><input type="text" name="emoba[at-char]" value="<?php echo $options['at-char']; ?>" /></td>
-						<td style="width:100%;">Character to substitute for '@' when not using glyphs.</td>
+						<td style="width:80%;">Character to substitute for '@' when not using glyphs.</td>
 					</tr>
 					<tr valign="top"><th scope="row">Dot-Char</th>
 						<td><input type="text" name="emoba[dot-char]" value="<?php echo $options['dot-char']; ?>" /></td>
-						<td style="width:100%;">Character to substitute for '.' when not using glyphs.</td>
+						<td style="width:80%;">Character to substitute for '.' when not using glyphs.</td>
 					</tr>
 				</table>
 				<p class="submit">
 				<input type="submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
 				</p>
 			</form>
+
+			<p>	<b>emObA</b> effectively and automatically makes it difficult for spambots to harvest email addresses from your Wordpress-powered blog. Email addresses may be placed in posts, comments, and pages, as html links, in a special &ldquo;easy email&rdquo; form, or as the address itself, and they will be protected by emObA automatically. All email addresses appearing on your blog will appear on the screen (if JavaScript is enabled) as active links to normal, valid, and correct email addresses, but to spambots they will have no recognizable features.  (As usual, the actual email appears in the status bar when hovering.)</p>
+
+			<p>The email addresses occur in the HTML source only in a well-hidden encoding.  The email address is converted to hexadecimal and appears only as the value of a JavaScript variable.  That encoded email is separated in the JavaScript from the telltale <code>mailto:</code> to further confuse spambots.</p>
+
+			<p>emObA recognizes, and produces obfuscated active (click-to-send) email links for</p>
+
+			<ul style="list-style-type:circle;list-style-position:inside;margin-left:2em;">
+				<li>standard email links (<code>&lt;a href="mailto:you@example.com"&gt;Real Name&lt;/a&gt;</code>), allowing class and style attributes (but ignoring other attributes), and allowing an email Subject using the syntax <code>mailto:you@example.com?subject=...</code>.</li>
+				<li>the special "easy to write" form  <code>[EMAIL Real Name | you@example.com]</code>, also allowing the <code>?subject=... ]</code> syntax.  (The much more fragile <code>[Real Name] you@example.com</code> of earlier emObA versions remains available if <code>legacy</code> is chosen.)</li>
+				<li>a bare email address <code>you@example.com</code>, with or without "mailto:" in front of it. (<code>?subject=</code> syntax not allowed here.)</li>
+			</ul>
+
+			<p>These will all appear as active email links displaying "Real Name". In the cases of a bare email link (one which has no Real Name) or a link in which the Real Name is the email itself, the link will show as the email displayed in human-readable form, eg <code>you [@] example [.] com</code>, where the [@] and [.] are either text symbols or graphic images (as set in administration), hiding the email addresses from spambots.</p>
+
+			<p>If JavaScript is not enabled, the email will appear in obfuscated but human-readable form but the link will not be active.</p>
+
+			<p>I believe any legitimate email will be recognized.  However, no attempt at validation is made -- certain illegally formed addresses will also be recognized, for example, ones containing two successive .'s. (Note: Legal characters before the @ are <code>!#$%&amp;'*+/=?^_{|}~- and `</code>.)</p>
+
+			<p>I've designed this plug-in with "real name" emails in mind -- <code>&lt;a href="mailto:you@example.com"&gt;Real Name&lt;/a&gt;</code> or <code>[EMAIL Real Name | you@example.com]</code>, which display as <code>Real Name</code>.  This will follow whatever styling you apply to your text and to links.  However, if you primarily obfuscate lists of bare email addresses -- <code>you@example.com</code> -- you may not be satisfied with the appearance.  They will appear with either glyphs or specified text symbols in place of @ and . .  The color and weights of the glyphs are fixed (though they do change size with surrounding text), and they don't look exactly like the font symbols they replace. And if text symbols are used, they certainly don't look exactly like @ and ..</p>
+
+			<p>&nbsp;</p>
+
+
+
 		</div>
-		<?php
+
+
+<?php
 	}
 
 	// Sanitize and validate input. Accepts an array, return a sanitized array.
@@ -167,13 +182,7 @@ if ( is_admin() ) {
 	}
 
 
-
-
-
-
-/**********************************************************************************************************/
-
-}else{ /**** not admin ***/
+}else{ /****** NOT ADMIN **************************************************************************/
 
 
 	/****
