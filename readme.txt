@@ -60,7 +60,7 @@ requires WP 2.8+.
 == Changelog ==
 
 = 2.0 =
-2010/12/04 Administration page added.  Slight changes in regex -- allow longer (up to 6) top-domain name; simplify handling of case.
+2010/12/04 Administration page added.  Slight changes in regex -- allow longer (up to 6) top-domain name; simplify handling of case.  Removed spaces that appeared after an email at end of sentence, and placed parentheses around eaddress when no javascript (thanks, luckyduck288).
 
 = 1.6.5 =
 2010/11/20 Extra attributes in link broke parse in 1.6; now class and style are carried through, any others are swallowed harmlessly.  
