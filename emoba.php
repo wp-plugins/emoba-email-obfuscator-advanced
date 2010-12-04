@@ -59,10 +59,10 @@ if($emoba_options == false)	{
 
 	// Create array of default settings
 	$emoba_options = array(
-		'clickpop'		=>	false,
-		'glyphs'			=>	true,
-		'baretolink'	=>	true,
-		'legacy'			=>	false,
+		'clickpop'		=>	0,
+		'glyphs'			=>	1,
+		'baretolink'	=>	1,
+		'legacy'			=>	0,
 		'at-char'			=>	'&copy;',
 		'dot-char'		=>	'&bull;'
 	);
@@ -135,7 +135,7 @@ if ( is_admin() ) {
 					</tr>
 					<tr valign="top"><th scope="row">Legacy mode</th>
 						<td><input name="emoba[legacy]" type="checkbox" value="1" <?php checked('1', $options['legacy']); ?> /></td>
-						<td style="width:100%;">If LEGACY is true, the old "simple" form `[Name] A@B.C` will be converted to an email link. This can be turned off to avoid problems with WordPress shortcuts, in which case the email will be treated as bare, preceded by [Name]. Regardless of the value of LEGACY, the new form `[EMAIL Name | A@B.C]` will be properly converted</td>
+						<td style="width:100%;">If legacy is true, the old "simple" form `[Name] A@B.C` will be converted to an email link. This can be turned off to avoid problems with WordPress shortcuts, in which case the email will be treated as bare, preceded by [Name]. Regardless of the value of legacy, the new form `[EMAIL Name | A@B.C]` will be properly converted</td>
 					</tr>
 					<tr valign="top"><th scope="row">At-Char</th>
 						<td><input type="text" name="emoba[at-char]" value="<?php echo $options['at-char']; ?>" /></td>
@@ -176,9 +176,6 @@ if ( is_admin() ) {
 }else{ /**** not admin ***/
 
 
-	/********* /CONFIGURATION *********/
-	/**********************************/
-
 	/****
 	Here we designate the symbols used for at/dot separators in the displayed email addresses.
 	You may want to change the alts or i18n them.
@@ -191,9 +188,6 @@ if ( is_admin() ) {
 		define("AT_SYMBOL",  $emoba_options['at-char']);
 		define("DOT_SYMBOL", $emoba_options['dot-char']);
 	}
-
-
-
 
 
 	/****
@@ -241,9 +235,10 @@ if ( is_admin() ) {
 	The JavaScript for creating the email link and popup
 	****/
 	function emoba_addJScript($email, $ename, $id, $estyle=null, $eclass=null) {
+		global $emoba_options;
 		$link   = emoba_hexify_mailto($email);
 		$clean_name = str_replace("<", "&lt;", $ename);
-		$emoba_js = "<script type=\"text/javascript\">emobascript('".$link."','".$clean_name."','".$id."','".$estyle."','".$eclass."',".((true==CLICKPOP)?1:0).");</script>";
+		$emoba_js = "<script type=\"text/javascript\">emobascript('".$link."','".$clean_name."','".$id."','".$estyle."','".$eclass."','".$emoba_options['clickpop']."'); </script>";
 		return $emoba_js;
 	}
 
@@ -274,6 +269,7 @@ if ( is_admin() ) {
 	****/
 
 	function emoba_replace($content) {
+		global $emoba_options;
 
 	// (1) convert full email link <a  href="mailto:A@B.C?subject=sss" >Name</a>
 
@@ -315,7 +311,8 @@ if ( is_admin() ) {
 				return $repaddr;' ),
 			$content );
 
-	if ( true == LEGACY ) {
+
+	if ( 1 == $emoba_options['legacy'] ) {
 
 	// (2') (Legacy) Convert the special pattern [Name] A@B.C to email link <a href="mailto:A@B.C >Name</a>
 
@@ -335,7 +332,7 @@ if ( is_admin() ) {
 	}
 
 
-	if ( true == BARE_TO_LINK ) {
+	if ( 1 == $emoba_options['baretolink'] ) {
 
 	// (3) Convert bare email addresses A@B.C to the link <a href="mailto:A@B.C">A B C</a>
 

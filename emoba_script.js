@@ -10,7 +10,7 @@ function emobascript(email, ename, id, eclass, estyle, hover) {
   if (estyle) {linkNode.setAttribute('style', estyle);}
   var mailtolink = mailtoString + email;
   linkNode.href = mailtolink;
-	if (hover) {
+	if (hover == 1) {
 		var spanNode = document.createElement('span');
 		spanNode.className = 'emoba-hover';
 		spanNode.innerHTML = 'Click to email ';
