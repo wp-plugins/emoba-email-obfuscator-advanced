@@ -218,8 +218,8 @@ if ( is_admin() ) {
 	function emoba_readable_email($email="", $name="(Hover)" ) {
 		$transformed_email = emoba_symb_email($email);
 		$addr = '<span class="emoba-pop">' . $name . '<span ';
-		$addr .= '>&nbsp;&nbsp;';
-		$addr .= $transformed_email . '&nbsp;&nbsp;</span></span>';
+		$addr .= '>&nbsp;&nbsp;(';
+		$addr .= $transformed_email . ')&nbsp;&nbsp;</span></span>';
 		return $addr;
 	}
 
@@ -289,7 +289,7 @@ if ( is_admin() ) {
 				$em_name = emoba_symb_email($match[5]);
 				$id = "emoba-" . rand(1000, 9999);
 				$repaddr = "<span id=\"$id\">";
-				$repaddr .= emoba_readable_email($em_email, $em_name) . "</span>\n";
+				$repaddr .= emoba_readable_email($em_email, $em_name) . "</span>";
 				$repaddr .= emoba_addJScript($em_email, $em_name, $id, $em_class, $em_style);
 				return $repaddr;' ),
 			$content );
@@ -304,14 +304,14 @@ if ( is_admin() ) {
 	// (2) Convert the special pattern [EMAIL Name | A@B.C] to email link <a href="mailto:A@B.C >Name</a>
 	//     Allows any number of spaces at each position within [EMAIL|]
 		$content = preg_replace_callback(
-			'`\[EMAIL(?:[\s]|&nbsp;)*([^|]+)(?:(?:[\s]|&nbsp;)*[|](?:[\s]|&nbsp;)*)'.EMAILADDR.'([?][^]]*?)?(?:[ ]|&nbsp;)*]`',
+			'`\[EMAIL([^|]+)(?:(?:[\s]|&nbsp;)*[|](?:[\s]|&nbsp;)*)'.EMAILADDR.'([?][^]]*?)?(?:[ ]|&nbsp;)*]`',
 			create_function(
 				'$match',
 				'$em_email = $match[2].$match[3];
-				$em_name = emoba_symb_email($match[1]);
+				$em_name = emoba_symb_email(trim($match[1]));
 				$id = "emoba-" . rand(1000, 9999);
 				$repaddr = "<span id=\"$id\">";
-				$repaddr .= emoba_readable_email($em_email, $em_name). "</span>\n";
+				$repaddr .= emoba_readable_email($em_email, $em_name). "</span>";
 				$repaddr .= emoba_addJScript($em_email, $em_name, $id);
 				return $repaddr;' ),
 			$content );
@@ -329,7 +329,7 @@ if ( is_admin() ) {
 				$em_name = emoba_symb_email($match[1]);
 				$id = "emoba-" . rand(1000, 9999);
 				$repaddr = "<span id=\"$id\">";
-				$repaddr .= emoba_readable_email($em_email, $em_name). "</span>\n";
+				$repaddr .= emoba_readable_email($em_email, $em_name). "</span>";
 				$repaddr .= emoba_addJScript($em_email, $em_name, $id);
 				return $repaddr;' ),
 			$content );
@@ -349,7 +349,7 @@ if ( is_admin() ) {
 				$em_name = emoba_symb_email($em_email);
 				$id = "emoba-" . rand(1000, 9999);
 				$repaddr = "<span id=\"$id\">";
-				$repaddr .= emoba_symb_email($em_email) . "</span>\n";
+				$repaddr .= emoba_symb_email($em_email) . "</span>";
 				$repaddr .= emoba_addJScript($em_email, $em_name, $id);
 				return $repaddr;' ),
 			$content );

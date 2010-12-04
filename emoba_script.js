@@ -1,4 +1,4 @@
-/** Version 1.6.5 **/
+/** Version 2.0 **/
 function emobascript(email, ename, id, eclass, estyle, hover) {
 	var cleanName = ename.replace(/&lt;/g, '<');
   var mailtoString = 'mailto:';
