@@ -108,30 +108,30 @@ if ( is_admin() ) {
 				<?php $options = get_option('emoba'); ?>
 				<h3> Options</h3>
 				<table class="emoba-form-table">
+					<tr valign="top"><th scope="row">Glyphs</th>
+						<td><input name="emoba[glyphs]" type="checkbox" value="1" <?php checked('1', $options['glyphs']); ?> /></td>
+						<td style="width:80%;">If checked, glyphs will be used for replacing <code>@</code> and <code>.</code> in displayed emails. If not checked, text will be used instead.</td>
+					</tr>
 					<tr valign="top">
 						<th scope="row">ClickPop</th>
 						<td><input name="emoba[clickpop]" type="checkbox" value="1" <?php checked('1', $options['clickpop']); ?> /></td>
-						<td style="width:80%;">If checked, hovering over the link "addr" changes it to "Click to email addr".</td>
-					</tr>
-					<tr valign="top"><th scope="row">Glyphs</th>
-						<td><input name="emoba[glyphs]" type="checkbox" value="1" <?php checked('1', $options['glyphs']); ?> /></td>
-						<td style="width:80%;">If checked, glyphs will be used, text otherwise, for replacing @ and . in displayed emails.</td>
+						<td style="width:80%;">If checked, hovering over the link <code>addr</code> changes it to <code>Click to email addr</code>.</td>
 					</tr>
 					<tr valign="top"><th scope="row">Bare with link</th>
 						<td><input name="emoba[baretolink]" type="checkbox" value="1" <?php checked('1', $options['baretolink']); ?> /></td>
-						<td style="width:80%;">If checked, bare emails (a@b.c) will be an email link.  If false, the email will appear in the glyph form, but there will be no link.</td>
+						<td style="width:80%;">If checked, a bare email (<code>a@b.c</code>) will be an active email link.  If not checked, the email will appear in the glyph form, but there will be no link.</td>
 					</tr>
 					<tr valign="top"><th scope="row">Legacy mode</th>
 						<td><input name="emoba[legacy]" type="checkbox" value="1" <?php checked('1', $options['legacy']); ?> /></td>
-						<td style="width:80%;">If legacy is true, the old "simple" form `[Name] A@B.C` will be converted to an email link. This can be turned off to avoid problems with WordPress shortcuts, in which case the email will be treated as bare, preceded by [Name]. Regardless of the value of legacy, the new form `[EMAIL Name | A@B.C]` will be properly converted</td>
+						<td style="width:80%;">If <code>Legacy mode</code> is checked, the old "simple" form <code>[Name] A@B.C</code> will be converted to an email link. This can be turned off to avoid problems with WordPress shortcuts, in which case the email will be treated as bare, preceded by <code>[Name].</code> Whether or not <code>Legacy mode</code> is checked, the new form <code>[EMAIL Name | A@B.C]</code> will be properly converted.</td>
 					</tr>
 					<tr valign="top"><th scope="row">At-Char</th>
 						<td><input type="text" name="emoba[at-char]" value="<?php echo $options['at-char']; ?>" /></td>
-						<td style="width:80%;">Character to substitute for '@' when not using glyphs.</td>
+						<td style="width:80%;">Character to substitute for <code>@</code> when not using glyphs (default: &amp;copy;).</td>
 					</tr>
 					<tr valign="top"><th scope="row">Dot-Char</th>
 						<td><input type="text" name="emoba[dot-char]" value="<?php echo $options['dot-char']; ?>" /></td>
-						<td style="width:80%;">Character to substitute for '.' when not using glyphs.</td>
+						<td style="width:80%;">Character to substitute for <code>.</code> when not using glyphs (default: &amp;bull;).</td>
 					</tr>
 				</table>
 				<p class="submit">
@@ -147,8 +147,10 @@ if ( is_admin() ) {
 
 			<ul style="list-style-type:circle;list-style-position:inside;margin-left:2em;">
 				<li>standard email links (<code>&lt;a href="mailto:you@example.com"&gt;Real Name&lt;/a&gt;</code>), allowing class and style attributes (but ignoring other attributes), and allowing an email Subject using the syntax <code>mailto:you@example.com?subject=...</code>.</li>
+
 				<li>the special "easy to write" form  <code>[EMAIL Real Name | you@example.com]</code>, also allowing the <code>?subject=... ]</code> syntax.  (The much more fragile <code>[Real Name] you@example.com</code> of earlier emObA versions remains available if <code>legacy</code> is chosen.)</li>
-				<li>a bare email address <code>you@example.com</code>, with or without "mailto:" in front of it. (<code>?subject=</code> syntax not allowed here.)</li>
+
+				<li>a bare email address <code>you@example.com</code>, with or without <code>mailto:</code> in front of it. (<code>?subject=</code> syntax not allowed here.)</li>
 			</ul>
 
 			<p>These will all appear as active email links displaying "Real Name". In the cases of a bare email link (one which has no Real Name) or a link in which the Real Name is the email itself, the link will show as the email displayed in human-readable form, eg <code>you [@] example [.] com</code>, where the [@] and [.] are either text symbols or graphic images (as set in administration), hiding the email addresses from spambots.</p>
@@ -255,14 +257,8 @@ if ( is_admin() ) {
 	/****
 	This is the RE expression for detecting email addresses.
 	****/
-
-	//define( "EMAILADDR", "([A-Za-z0-9.#$%&'!*+/=?^_{|}~-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,6})" ); // disallows backtick `
-
-		define("ECHARS","[^,;<>\@\][\001-\040\200-\377]");
-		define( "EMAILADDR", "(".ECHARS."+@[A-Za-z0-9.-]+\.[A-Za-z]{2,6})" ); // allows \t,\n, etc and two successive .'s
-
-	//	define("ECHARS1","[^,;<>\@\]\.[\001-\040\200-\377]");
-	//	define( "EMAILADDR", "(".ECHARS1."+(?:\.".ECHARS1."+)*@(?:[A-Za-z0-9-]+\.)+[A-Za-z]{2,6})" ); // allows \t,\n, etc
+	define( "EMAILADDR", "([^,;<>\@\][\001-\040\200-\377]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,6})" );
+		// Not necessarily legal e-address: Allows \t,\n, etc and two successive .'s
 
 
 	/****

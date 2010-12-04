@@ -38,7 +38,7 @@ span.emoba-realname {
   clear: both;
   margin-bottom: -8px;
   margin-top: 0.5em;
-  width: 90%;
+  width: 50em;
 	margin-left:2em;
 }
 .emoba-form-table td {
@@ -48,7 +48,8 @@ span.emoba-realname {
 	width:4em;
 }
 .emoba-form-table th {
-	font-size:14px;
+	font-size:13px;
 	font-weight:normal;
 	text-align:left;
 }
+
