@@ -1,13 +1,13 @@
 <?php
 /*
 Plugin Name: emObA
-Description: emObA (email Obfuscator Advanced) -- Scans pages, posts, comments for email addresses and creates mailto links which are difficult for 'bot harvesters to find. Typing A@B.C results in a "A@B.C" link, with grahic representations of "@"and "."; html anchor links with href="mailto:" are obfuscated; the special occurrence "[EMAIL Name | A@B.C]"  is recognized and results in an obfuscated link on "Name".  Without JavaScript, hovering pops up the email with graphic glyphs for "@" and ".".  (Based on eMob Email Obfuscator 1.1 by Billy Halsey.)
+Description: emObA (email Obfuscator Advanced) -- Scans pages, posts, comments for email addresses and creates mailto links which are difficult for 'bot harvesters to find. Typing A@B.C results in a "A@B.C" link, with grahic representations of "@"and "."; html anchor links with href="mailto:" are obfuscated; the special occurrence "[EMAIL Name | A@B.C]"  is recognized and results in an obfuscated link on "Name".  Without JavaScript, hovering pops up the email with graphic glyphs for "@" and ".".  (Based on eMob Email Obfuscator 1.1 by Billy Halsey, last updated in 2007.)
 Version: 2.0
 License: GPL
 Author: Kim Kirkpatrick
 Author URI: http://kirknet/wpplugins
 */
-/*  Copyright 2009  Kim Kirkpatrick  (email : kirk@kirknet.org)
+/*  Copyright 2010  Kim Kirkpatrick  (email : kirk@kirknet.org)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -24,15 +24,13 @@ Author URI: http://kirknet/wpplugins
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+
 // Prevent direct call to this php file
 if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You are not allowed to call this page directly.'); }
 
-
 define('EMOBA_PLUGIN_URL', plugin_dir_url(__FILE__));
 
-/****
-Place the css and js in the head:
-****/
+// Place the css and js in the head:
 function emoba_includes(){
   wp_enqueue_style( 'emoba_style', plugin_dir_url(__FILE__) . 'emoba_style.css');
   wp_enqueue_script('emoba_script', plugin_dir_url(__FILE__) . 'emoba_script.js');
@@ -40,16 +38,16 @@ function emoba_includes(){
 add_action('init','emoba_includes');
 
 
-/**** OPTIONS
-If CLICKPOP is true, hovering over the link "addr" changes it to "Click to email addr".
+/****** OPTIONS ******
+If clickpop=1, hovering over the link "addr" changes it to "Click to email addr".
 
-If GLYPHS is true, glyphs will be used, text otherwise, for replacing @ and . in displayed emails.
+If glyphs=1, glyphs will be used for replacing @ and . in displayed emails; if glyphs=0, text characters (determined by at-char and dot-char) will be used.
 
-If BARE_TO_LINK is true, bare emails (a@b.c) will be converted to a link.  If false, the email will appear in the glyph form, but there will be no link.
+If baretolink=1, bare emails (a@b.c) will be converted to a link.  If baretolink=0, there will be no link.
 
-If LEGACY is true, the old "simple" form `[Name] A@B.C` will be converted to an email link. This can be turned off to avoid problems with WordPress shortcuts, in which case the email will be treated as bare, preceded by [Name].
-Regardless of the value of LEGACY, the new form `[EMAIL Name | A@B.C]` will be properly converted.
-****/
+If legacy=1, the old "simple" form `[Name] A@B.C` will be converted to an email link. This can be turned off to avoid problems with WordPress shortcuts, in which case the email will be treated as bare, preceded by [Name].
+Regardless of the value of legacy, the new form `[EMAIL Name | A@B.C]` will be properly converted.
+********************/
 
 // Check do we have options in DB. Write defaults if not.
 
@@ -69,13 +67,10 @@ if($emoba_options == false)	{
 	update_option('emoba',$emoba_options);
 }
 
-/** Use this to aid in version upgrade with added options -- none right now
-}else{
-	// Add missing options to DB
-	if(isset($emoba_options[''])==false) // Do we have it in DB?	{
-		// Setup & add options to DB
+/** In version upgrade, use this to fill in missing new options -- none right now
+else{
+	if(isset($emoba_options[''])==false)
 		$emoba_options[''] = ;
-	}
 	// Add new fields to DB
 	update_option('emoba',$emoba_options);
 }
@@ -90,6 +85,19 @@ if ( is_admin() ) {
 	function emoba_init(){
 		register_setting( 'emoba_options', 'emoba', 'emoba_validate' );
 	}
+
+	// Sanitize and validate input. Accepts an array, return a sanitized array.
+	function emoba_validate($input) {
+		$input['clickpop'] 		=		( $input['clickpop'] == 1 ? 1 : 0 );
+		$input['glyphs'] 			=		( $input['glyphs'] == 1 ? 1 : 0 );
+		$input['baretolink']	=		( $input['baretolink'] == 1 ? 1 : 0 );
+		$input['legacy'] 			=		( $input['legacy'] == 1 ? 1 : 0 );
+		$input['at-char']			=		wp_filter_nohtml_kses($input['at-char']);
+		$input['dot-char']		=		wp_filter_nohtml_kses($input['dot-char']);
+
+		return $input;
+	}
+
 
 	// Add menu page
 	function emoba_add_menu() {
@@ -153,37 +161,22 @@ if ( is_admin() ) {
 				<li>a bare email address <code>you@example.com</code>, with or without <code>mailto:</code> in front of it. (<code>?subject=</code> syntax not allowed here.)</li>
 			</ul>
 
-			<p>These will all appear as active email links displaying "Real Name". In the cases of a bare email link (one which has no Real Name) or a link in which the Real Name is the email itself, the link will show as the email displayed in human-readable form, eg <code>you [@] example [.] com</code>, where the [@] and [.] are either text symbols or graphic images (as set in administration), hiding the email addresses from spambots.</p>
+			<p>These will all appear as active email links displaying "Real Name". In the cases of a bare email link (one which has no Real Name) or a link in which the Real Name is the email itself, the link will show as the email displayed in human-readable form, eg <code>you [@] example [.] com</code>, where the <code>[@]</code> and <code>[.]</code> are either text symbols or graphic images (as set in administration), hiding the email addresses from spambots.</p>
 
 			<p>If JavaScript is not enabled, the email will appear in obfuscated but human-readable form but the link will not be active.</p>
 
 			<p>I believe any legitimate email will be recognized.  However, no attempt at validation is made -- certain illegally formed addresses will also be recognized, for example, ones containing two successive .'s. (Note: Legal characters before the @ are <code>!#$%&amp;'*+/=?^_{|}~- and `</code>.)</p>
 
-			<p>I've designed this plug-in with "real name" emails in mind -- <code>&lt;a href="mailto:you@example.com"&gt;Real Name&lt;/a&gt;</code> or <code>[EMAIL Real Name | you@example.com]</code>, which display as <code>Real Name</code>.  This will follow whatever styling you apply to your text and to links.  However, if you primarily obfuscate lists of bare email addresses -- <code>you@example.com</code> -- you may not be satisfied with the appearance.  They will appear with either glyphs or specified text symbols in place of @ and . .  The color and weights of the glyphs are fixed (though they do change size with surrounding text), and they don't look exactly like the font symbols they replace. And if text symbols are used, they certainly don't look exactly like @ and ..</p>
-
-			<p>&nbsp;</p>
-
-
-
+			<p>I've designed this plug-in with "real name" emails in mind -- <code>&lt;a href="mailto:you@example.com"&gt;Real Name&lt;/a&gt;</code> or <code>[EMAIL Real Name | you@example.com]</code>, which display as <code>Real Name</code>.  This will follow whatever styling you apply to your text and to links.  However, if you primarily obfuscate lists of bare email addresses -- <code>you@example.com</code> -- you may not be satisfied with the appearance.  They will appear with either glyphs or specified text symbols in place of <code>@</code> and <code>.</code> .  The color and weights of the glyphs are fixed (though they do change size with surrounding text), and they don't look exactly like the font symbols they replace. And if text symbols are used, they certainly don't look exactly like <code>@</code> and <code>.</code>.</p>
+			<hr/>
+			<p>Version 2.0 &mdash; 4 December 2010&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<a href="http://kirknet/wpplugins">Author's emObA web page</a>&nbsp;&nbsp;&nbsp;&nbsp;
+			<a href="http://wordpress.org/extend/plugins/emoba-email-obfuscator-advanced/">emObA at WordPress.org</a></p>
 		</div>
 
 
 <?php
 	}
-
-	// Sanitize and validate input. Accepts an array, return a sanitized array.
-	function emoba_validate($input) {
-		$input['clickpop'] 		=		( $input['clickpop'] == 1 ? 1 : 0 );
-		$input['glyphs'] 			=		( $input['glyphs'] == 1 ? 1 : 0 );
-		$input['baretolink']	=		( $input['baretolink'] == 1 ? 1 : 0 );
-		$input['legacy'] 			=		( $input['legacy'] == 1 ? 1 : 0 );
-		$input['at-char']			=		wp_filter_nohtml_kses($input['at-char']);
-		$input['dot-char']		=		wp_filter_nohtml_kses($input['dot-char']);
-
-		return $input;
-	}
-
-
 }else{ /****** NOT ADMIN **************************************************************************/
 
 
@@ -356,7 +349,7 @@ if ( is_admin() ) {
 
 	}else{
 
-	// (3) Convert any remaining addresses A@B.C
+	// (3) Convert any bare email addresses A@B.C
 		$content = preg_replace_callback(
 			'`'.EMAILADDR.'`',
 			create_function(
@@ -373,11 +366,20 @@ if ( is_admin() ) {
 	}
 
 
+	function emoba_noemobascript($content) {
+		$content = preg_replace(
+			'`(&nbsp;&nbsp;\([^)]+?\)&nbsp;&nbsp;)?emobascript\([^)]+(\);)?`',
+			'',
+			$content );
+		return $content;
+	}
+
 	/****
 	Finally, link emoba_replace() into WordPress filters
 	******/
 	add_filter('the_content', 'emoba_replace');
-	add_filter('the_excerpt', 'emoba_replace');
+	add_filter('get_the_excerpt', 'emoba_replace');
+	add_filter('get_the_excerpt', 'emoba_noemobascript');
 	add_filter('comment_text', 'emoba_replace', 1); // high priority, to get there before the comment text filters do
 	add_filter('widget_text', 'emoba_replace');
 	add_filter('author_email', 'emoba_replace');
