@@ -1,11 +1,11 @@
 === emObA - Email Obfuscator Advanced ===
 Author: Kim Kirkpatrick
-Contributors:  kirkpatrick
+Contributors:  kirkpatrick, Joe d'Andrea, sassymonkey, capnhairdo, luckyduck288, 
 Donate link: http://kirknet.org/wpplugins/
 Tags: spam, email, mail, address, addresses, hide, JavaScript
 Requires at least: 2.8
 Tested up to: 3.0.1
-Stable tag: 1.6.5
+Stable tag: 2.0
 Version 2.0
 
 
@@ -44,7 +44,7 @@ I've designed this plug-in with "real name" emails in mind -- `<a href="mailto:y
 == Upgrade notice ==
 
 = 2.0 =
-Now has administration page for setting parameters.
+Now has administration page for setting parameters. Works (reasonably) with excerpts.
 
 = 1.6.5 =
 Now handles preexisting class and style attributes in email link.
@@ -60,7 +60,7 @@ requires WP 2.8+.
 == Changelog ==
 
 = 2.0 =
-2010/12/04 Administration page added.  Slight changes in regex -- allow longer (up to 6) top-domain name; simplify handling of case.  Removed spaces that appeared after an email at end of sentence, and placed parentheses around eaddress when no javascript (thanks, luckyduck288).
+2010/12/04 Administration page added.  Slight changes in regex -- allow longer (up to 6) top-domain name; simplify handling of case.  Removed spaces that appeared after an email at end of sentence, and placed parentheses around eaddress when no javascript (thanks, luckyduck288).  Fixed misbehavior on the_excerpt.
 
 = 1.6.5 =
 2010/11/20 Extra attributes in link broke parse in 1.6; now class and style are carried through, any others are swallowed harmlessly.  
