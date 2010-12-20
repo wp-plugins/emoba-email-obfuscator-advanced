@@ -32,8 +32,8 @@ define('EMOBA_PLUGIN_URL', plugin_dir_url(__FILE__));
 
 // Place the css and js in the head:
 function emoba_includes(){
-  wp_enqueue_style( 'emoba_style', plugin_dir_url(__FILE__) . 'emoba_style.css');
-  wp_enqueue_script('emoba_script', plugin_dir_url(__FILE__) . 'emoba_script.js');
+  wp_enqueue_style( 'emoba_style', EMOBA_PLUGIN_URL . 'emoba_style.css');
+  wp_enqueue_script('emoba_script', EMOBA_PLUGIN_URL . 'emoba_script.js');
 }
 add_action('init','emoba_includes');
 

@@ -1,10 +1,9 @@
 === emObA - Email Obfuscator Advanced ===
 Author: Kim Kirkpatrick
 Contributors:  kirkpatrick, Joe d'Andrea, sassymonkey, capnhairdo, luckyduck288, 
-Donate link: http://kirknet.org/wpplugins/
 Tags: spam, email, mail, address, addresses, hide, JavaScript
 Requires at least: 2.8
-Tested up to: 3.0.1
+Tested up to: 3.0.3
 Stable tag: 2.0
 Version 2.0
 
